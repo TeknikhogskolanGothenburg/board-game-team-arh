@@ -6,7 +6,9 @@ using System.Threading.Tasks;
 
 namespace GameEngine
 {
-    class Position
+    public class Position
     {
+        public int X { get; set; }
+        public int Y { get; set; }
     }
 }

@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GameEngine
+﻿namespace GameEngine
 {
-    class BoatType
+    enum BoatType
     {
+        Battleship = 5,
+        Cruiser = 4,
+        Destroyer = 3,
+        Submarine = 2
     }
 }
