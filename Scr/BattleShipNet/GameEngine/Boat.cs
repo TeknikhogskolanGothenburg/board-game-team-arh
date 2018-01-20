@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GameEngine
 {
-    class Boat
+    public class Boat
     {
         public Position[] Positions { get;}
         public BoatType Type { get; }

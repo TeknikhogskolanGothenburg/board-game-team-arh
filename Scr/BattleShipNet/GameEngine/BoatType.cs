@@ -1,6 +1,6 @@
 ﻿namespace GameEngine
 {
-    enum BoatType
+    public enum BoatType
     {
         Battleship = 5,
         Cruiser = 4,
