@@ -12,6 +12,22 @@ namespace GameEngine
         public Boat[] Boats{ get; }
         public List<Position> AlreadyHitPositions{ get; private set; }
 
+        public bool HasPlayerLost
+        {
+            get
+            {
+                foreach (var boat in Boats)
+                {
+                    if (!boat.Sink)
+                    {
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -31,6 +47,86 @@ namespace GameEngine
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine)
             };
+
+            PositionsBoats();
+        }
+
+        /// <summary>
+        /// Positions Boats random, based on https://github.com/exceptionnotfound/BattleshipModellingPractice/
+        /// </summary>
+        private void PositionsBoats()
+        {
+            //Random class creation stolen from http://stackoverflow.com/a/18267477/106356
+            Random rand = new Random(Guid.NewGuid().GetHashCode());
+
+            foreach (Boat boat in Boats)
+            {
+                // Select a random row/column combination, then select a random orientation.
+                // If none of the proposed squares are occupied, place the Boat
+                // Do this for all Boats
+
+                bool isOpen = false;
+                Position[] positions = new Position[2];
+
+                while (isOpen)
+                {
+                    int startX = rand.Next(1, 11);
+                    int startY = rand.Next(1, 11);
+                    int endY = startY, endX = startX;
+                    var orientation = rand.Next(1, 101) % 2; //0 for Horizontal
+
+                    // Calculate endY (Horizontal) or endX (Vertical)
+                    if (orientation == 0)
+                    {
+                        for (int i = 1; i < boat.Size; i++)
+                        {
+                            endY++;
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1; i < boat.Size; i++)
+                        {
+                            endX++;
+                        }
+                    }
+
+                    //We cannot place Boats beyond the boundaries of the board
+                    if (endY > 10 || endX > 10)
+                    {
+                        isOpen = true;
+                        continue;
+                    }
+
+                    positions = new Position[2] {
+                        new Position(startX, startY),
+                        new Position(endX, endY)
+                    };
+
+                    //Check if specified squad are occupied
+                    foreach (Boat ship in Boats)
+                    {
+                        if(ship.AreYouHere(positions))
+                        {
+                            isOpen = true;
+                            continue;
+                        }
+                    }
+
+                    // Try to set position
+                    if (!isOpen)
+                    {
+                        try
+                        {
+                            boat.SetPositions(positions);
+                        }
+                        catch
+                        {
+                            isOpen = true;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>
@@ -40,9 +136,12 @@ namespace GameEngine
         /// <returns>Validate result (bool)</returns>
         public bool IsPositionAlreadyHit(Position position)
         {
-             if(AlreadyHitPositions.Contains(position))
+             foreach(Position hitPosition in AlreadyHitPositions)
              {
-                return true;
+                if(position.X == hitPosition.X && position.Y == hitPosition.Y)
+                {
+                    return true;
+                }
              }
 
              return false;
@@ -74,23 +173,6 @@ namespace GameEngine
             
 
             return false;
-        }
-
-        /// <summary>
-        /// Check if player not got any Boats left, if not player has lost
-        /// </summary>
-        /// <returns>Validate result (bool)</returns>
-        public bool HasPlayerLost()
-        {
-            foreach(var boat in Boats)
-            {
-                if(!boat.Sink)
-                {
-                    return false;
-                }                            
-            }
-
-            return true;
         }
     }
 }

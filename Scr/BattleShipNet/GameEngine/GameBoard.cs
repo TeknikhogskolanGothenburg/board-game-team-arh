@@ -5,110 +5,75 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace GameEngine
-
 {
-    
-    public class Square
-    {
-        public Position Position { get; set; }
-        public bool HaveBoat { get; set; }
-        public bool HaveShoot { get; set; }
-    }
     public class GameBoard
     {
         public Player[] Players { get; }
         public string GameKey { get; }
-        public int Turn { get; }
-        private List<List<Square>> player1Board;
-        private List<List<Square>> player2Board;
+        public int Turn { get; private set; }
 
-        private List<List<Square>> CreateBoard()
-        {
-            var Board = new List<List<Square>>();
-
-            for (int i = 0; i < 10; i++)
-            {
-                List<Square> Column = new List<Square>();
-                for (int j = 0; j < 10; j++)
-                {
-
-                    var square = new Square();
-                    var position = new Position();
-                    position.X = i;
-                    position.Y = j;
-                    square.Position = position;
-                    Column.Add(square);
-                }
-                Board.Add(Column);
-            }
-
-            return Board;
-        }
-
+        /// <summary>
+        /// Default constructor
+        /// </summary>
         public GameBoard()
         {
-            player1Board = CreateBoard();
-            player2Board = CreateBoard();
-            
-            Player player1 = new Player();
-            Player player2 = new Player();
-
-            Players = new Player[2];
-            Players[0] = player1;
-            Players[1] = player2;
+            Players = new Player[2] {
+                new Player(),
+                new Player()
+            };
         }
 
-        public bool Shoot(int player, Position position)
+        /// <summary>
+        /// Shoot on a square in one a Player's board 
+        /// </summary>
+        /// <param name="playerId">Id for target player (int)</param>
+        /// <param name="position">Position to hit (Position)</param>
+        /// <returns>Het result (bool)</returns>
+        public bool Shoot(int playerId, Position position)
         {
-            if (player == 0)
+            // Check so there really are our turn
+            if (playerId != Turn)
             {
-                bool hit = player2Board[position.X][position.Y].HaveBoat;
-                player2Board[position.X][position.Y].HaveShoot = true;
-                return hit;
+                Player player = Players[playerId];
+
+                // Check so Position is not already hit
+                if (!player.IsPositionAlreadyHit(position))
+                {
+                    // Check if a Boat was hit, if not change turn to enemy
+                    if (!player.IsABoatHit(position))
+                    {
+                        Turn = playerId;
+                        return false;
+                    }
+
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("Position is already hit");
+                }
             }
             else
             {
-                bool hit = player1Board[position.X][position.Y].HaveBoat;
-                player1Board[position.X][position.Y].HaveShoot = true;
-                return hit;
+                throw new Exception("Not your turn!");
             }
         }
 
+        /// <summary>
+        /// Check if game is over, if it's return winner
+        /// </summary>
+        /// <param name="winner">Return winner's Player object</param>
+        /// <returns>Validate result (bool)</returns>
         public bool IsGameEnd(out Player winner)
         {
-            bool player1Won = true;
-            bool player2Won = true;
-
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 10; j++)
-                {
-                    if(player1Board[i][j].HaveBoat && player1Board[i][j].HaveShoot == false)
-                    {
-                        player1Won = false;
-                    }
-                }
-            }
-
-            for (int i = 0; i < 10; i++)
-            {
-                for (int j = 0; j < 10; j++)
-                {
-                    if (player2Board[i][j].HaveBoat && player2Board[i][j].HaveShoot == false)
-                    {
-                        player2Won = false;
-                    }
-                }
-            }
-
-            if (player1Won == true)
-            {
-                winner = Players[0];
-                return true;
-            }
-            else if (player2Won == true)
+            if (Players[0].HasPlayerLost)
             {
                 winner = Players[1];
+                return true;
+            }
+            else if (Players[1].HasPlayerLost)
+            {
+                winner = Players[0];
                 return true;
             }
 
@@ -116,6 +81,4 @@ namespace GameEngine
             return false;
         }
     }
-
-   
 }

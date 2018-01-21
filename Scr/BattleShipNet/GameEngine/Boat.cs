@@ -81,11 +81,43 @@ namespace GameEngine
         /// <summary>
         /// If Boat is here, return true
         /// </summary>
+        /// <param name="position">Positions to check (Position[])</param>
+        /// <returns>Validate result (bool)</returns>
+        public bool AreYouHere(Position[] positions)
+        {
+            // Check if it's horizontal or vertical, and loop-through all possible positions to check if Boat is there
+            if (positions[0].Y > positions[1].Y)
+            {
+                for (int i = positions[0].Y; i <= positions[1].Y; i++)
+                {
+                    if (AreYouHere(new Position(positions[0].X, i)))
+                    {
+                        return true;
+                    }  
+                }
+            }
+            else
+            {
+                for (int i = positions[0].X; i <= positions[1].X; i++)
+                {
+                    if (AreYouHere(new Position(i, positions[0].Y)))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// If Boat is here, return true
+        /// </summary>
         /// <param name="position">Position to check (Position)</param>
         /// <returns>Validate result (bool)</returns>
         public bool AreYouHere(Position position)
         {
-            if(position.X >= Positions[0].X && position.X <= Positions[1].X && position.Y >= Positions[0].Y && position.Y <= Positions[1].Y)
+            if (position.X >= Positions[0].X && position.X <= Positions[1].X && position.Y >= Positions[0].Y && position.Y <= Positions[1].Y)
             {
                 return true;
             }
