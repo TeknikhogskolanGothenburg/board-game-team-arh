@@ -12,13 +12,10 @@ namespace GameEngine
         public Boat[] Boats { get;set; }
         //public bool[] Trys { get; set;}  
         public List<Position> AlreadyHitPositions{get;set;}
-        public List<Position> HitButMissPositions { get; set; }
-
-     
+            
         public Player()
         {
             AlreadyHitPositions = new List<Position>();
-            HitButMissPositions = new List<Position>();
             Boats = new Boat[10];
         }
 
@@ -31,10 +28,6 @@ namespace GameEngine
         {
 
             if (AlreadyHitPositions.Contains(position))
-            {
-                return true;
-            }
-            else if (HitButMissPositions.Contains(position))
             {
                 return true;
             }
@@ -53,11 +46,6 @@ namespace GameEngine
                         {
                             AlreadyHitPositions.Add(position);
                             return true;
-                        }
-                        else
-                        {
-                            HitButMissPositions.Add(position);
-                            return false;
                         }
                     }
 
