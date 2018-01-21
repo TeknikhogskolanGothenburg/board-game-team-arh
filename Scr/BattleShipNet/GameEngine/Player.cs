@@ -9,69 +9,66 @@ namespace GameEngine
     public class Player
     {
         public string Name { get; set; }
-        public Boat[] EnemyBoats { get;set; }
-        public bool[] Trys { get; set;}
-        public Boat[] OwnBoats{get;set;}
+        public Boat[] Boats { get;set; }
+        //public bool[] Trys { get; set;}  
         public List<Position> AlreadyHitPositions{get;set;}
+        public List<Position> HitButMissPositions { get; set; }
 
      
         public Player()
         {
-           AlreadyHitPositions = new List<Position>();
+            AlreadyHitPositions = new List<Position>();
+            HitButMissPositions = new List<Position>();
+            Boats = new Boat[10];
         }
 
-        public void LoadEnemyBoats(Boat[] enemyBoats)
+        public void LoadBoats(Boat[] boats)
         {
-            EnemyBoats=enemyBoats;
+            Boats=boats;
         }
-
-         public void LoadOwnBoats(Boat[] ownBoats)
-        {
-            OwnBoats=ownBoats;
-        }
-
-
+        
         public bool IsTryAlreadyDone(Position position)
         {
-            
+
+            if (AlreadyHitPositions.Contains(position))
+            {
+                return true;
+            }
+            else if (HitButMissPositions.Contains(position))
+            {
+                return true;
+            }
             return false;
         }
 
-        public bool IsAlreadyHit(Position position)
-        {
-             if(AlreadyHitPositions.Contains(position))
-             {
-                return true;
-             }
-              return false;
-        }
-
-
         public bool IsItAHit(Position position)
         {
-            if( IsAlreadyHit(position))
+            if(!IsTryAlreadyDone(position))
             {
-                return false;
-            }
-            
-            foreach (var boat in EnemyBoats)
-	        {
-                foreach(var pos in boat.Positions)
+                foreach (var boat in Boats)
                 {
-                    if (position.X ==pos.X && position.Y==pos.Y)
+                    foreach (var pos in boat.Positions)
                     {
-                        AlreadyHitPositions.Add(position);
-                        return true;
+                        if (position.X == pos.X && position.Y == pos.Y)
+                        {
+                            AlreadyHitPositions.Add(position);
+                            return true;
+                        }
+                        else
+                        {
+                            HitButMissPositions.Add(position);
+                            return false;
+                        }
                     }
-                }
 
-	        }
+                }
+            }           
             return false;
         }
 
         public bool HasPlayerLost()
         {
-            foreach(var boat in OwnBoats)
+            foreach(var boat in Boats)
             {
                if(!boat.Sink)
                 {
