@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace GameEngine
 {
@@ -21,6 +22,8 @@ namespace GameEngine
                 new Player(),
                 new Player()
             };
+
+            GameKey = GenerateGameKey();
         }
 
         /// <summary>
@@ -79,6 +82,20 @@ namespace GameEngine
 
             winner = null;
             return false;
+        }
+
+        /// <summary>
+        /// Generate and returns a random game key
+        /// </summary>
+        /// <returns>Random game key (string)</returns>
+        private string GenerateGameKey()
+        {
+            Guid g = Guid.NewGuid();
+            string gameKey = Convert.ToBase64String(g.ToByteArray());
+            gameKey = Regex.Replace(gameKey, @"[^0-9a-zA-Z]+", "");
+            gameKey = gameKey.Substring(0,6);
+
+            return gameKey;
         }
     }
 }
