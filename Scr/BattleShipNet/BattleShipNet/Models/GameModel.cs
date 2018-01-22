@@ -9,11 +9,12 @@ namespace BattleShipNet.Models
     public class GameModel
     {
         private GameBoard gameBoard;
+        private List<List<Square>>[] playersBoard;
 
         /// <summary>
         /// Properties returning session player id - get
         /// </summary>
-        public int GetYourPlayerId
+        public int YourPlayerId
         {
             get
             {
@@ -22,24 +23,35 @@ namespace BattleShipNet.Models
         }
 
         /// <summary>
-        /// Properties returning session Player object - get
+        /// Properties returning session's enemy's player id - get
         /// </summary>
-        public Player GetYourPlayer
+        public int EnemyPlayerId
         {
             get
             {
-                return gameBoard.Players[GetYourPlayerId];
+                return (YourPlayerId == 1) ? 0 : 1;
+            }
+        }
+
+        /// <summary>
+        /// Properties returning session Player object - get
+        /// </summary>
+        public Player YourPlayer
+        {
+            get
+            {
+                return gameBoard.Players[YourPlayerId];
             }
         }
 
         /// <summary>
         /// Properties returning enemy Player object - get
         /// </summary>
-        public Player GetEnemyPlayer
+        public Player EnemyPlayer
         {
             get
             {
-                return (GetYourPlayerId == 1) ? gameBoard.Players[0] : gameBoard.Players[1];
+                return gameBoard.Players[EnemyPlayerId];
             }
         }
 
@@ -49,7 +61,7 @@ namespace BattleShipNet.Models
         public List<List<Square>> YourPlayerBoard {
             get
             {
-                return PrepareBoard(GetYourPlayer);
+                return PrepareBoard(YourPlayerId);
             }
         }
 
@@ -60,7 +72,7 @@ namespace BattleShipNet.Models
         {
             get
             {
-                return PrepareBoard(GetEnemyPlayer);
+                return PrepareBoard(EnemyPlayerId);
             }
         }
 
@@ -70,47 +82,75 @@ namespace BattleShipNet.Models
         public GameModel()
         {
             gameBoard = new GameBoard();
+
+            playersBoard = new List<List<Square>>[2]
+            {
+                CreateBoard(0),
+                CreateBoard(1)
+            };
+
         }
 
         /// <summary>
-        /// Prepare a player board
+        /// Create a player board
         /// </summary>
-        /// <param name="player">Player object to make board for</param>
-        /// <returns>Player board inform of a List of List of Square objects</returns>
-        private List<List<Square>> PrepareBoard(Player player)
+        /// <param name="playerId">Player id which to make board for (int)</param>
+        /// <returns>Player board (List of List of Square objects)</returns>
+        private List<List<Square>> CreateBoard(int playerId)
         {
-            List<List<Square>> Board = new List<List<Square>>();
+            List<List<Square>> playerBoard = new List<List<Square>>();
+            Player player = gameBoard.Players[playerId];
 
-            for (int y = 0; y < 10; y++)
+            for (int x = 0; x < 10; x++)
             {
-                List<Square> Column = new List<Square>();
-                for (int x = 0; x < 10; x++)
+                List<Square> column = new List<Square>();
+                for (int y = 0; y < 10; y++)
                 {
                     Square square = new Square();
                     square.PositionData = new Position(x, y);
 
-                    // If it's our board show Boats
-                    if(player == GetYourPlayer)
+                    // Check if any boat is in this square
+                    foreach (Boat boat in player.Boats)
                     {
-                        foreach (Boat boat in player.Boats)
+                        if (boat.AreYouHere(square.PositionData))
                         {
-                            if (boat.AreYouHere(square.PositionData))
-                            {
-                                square.HaveBoat = true;
-                                continue;
-                            }
+                            square.HaveBoat = true;
+                            continue;
                         }
                     }
-                    
-                    // Is position hit already?
-                    square.HaveBeenHit = player.IsPositionAlreadyHit(square.PositionData);
 
-                    Column.Add(square);
+                    column.Add(square);
                 }
-                Board.Add(Column);
+                playerBoard.Add(column);
             }
 
-            return Board;
+            return playerBoard;
+        }
+
+        /// <summary>
+        /// Prepare and update a player board
+        /// </summary>
+        /// <param name="playerId">Player id which to prepare board for (int)</param>
+        /// <returns>Player board (List of List of Square objects)</returns>
+        private List<List<Square>> PrepareBoard(int playerId)
+        {
+            List<List<Square>> playerBoard = playersBoard[playerId];
+
+            Player player = gameBoard.Players[playerId];
+
+            foreach (List<Square> column in playerBoard)
+            {
+                foreach (Square square in column)
+                {
+                    if (!square.HaveBeenHit)
+                    {
+                        // Is position hit already?
+                        square.HaveBeenHit = player.IsPositionAlreadyHit(square.PositionData);
+                    }
+                }
+            }
+
+            return playerBoard;
         }
     }
 }
