@@ -90,8 +90,7 @@ namespace GameEngine
         /// <returns>Random game key (string)</returns>
         private string GenerateGameKey()
         {
-            Guid g = Guid.NewGuid();
-            string gameKey = Convert.ToBase64String(g.ToByteArray());
+            string gameKey = Guid.NewGuid().ToString();
             gameKey = Regex.Replace(gameKey, @"[^0-9a-zA-Z]+", "");
             gameKey = gameKey.Substring(0,6);
 

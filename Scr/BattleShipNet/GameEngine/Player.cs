@@ -65,15 +65,15 @@ namespace GameEngine
                 // If none of the proposed squares are occupied, place the Boat
                 // Do this for all Boats
 
-                bool isOpen = false;
                 Position[] positions = new Position[2];
 
-                while (isOpen)
+                while (boat.Positions == null)
                 {
                     int startX = rand.Next(1, 11);
                     int startY = rand.Next(1, 11);
                     int endY = startY, endX = startX;
-                    var orientation = rand.Next(1, 101) % 2; //0 for Horizontal
+                    int orientation = rand.Next(1, 101) % 2; //0 for Horizontal
+
 
                     // Calculate endY (Horizontal) or endX (Vertical)
                     if (orientation == 0)
@@ -94,7 +94,6 @@ namespace GameEngine
                     //We cannot place Boats beyond the boundaries of the board
                     if (endY > 10 || endX > 10)
                     {
-                        isOpen = true;
                         continue;
                     }
 
@@ -103,27 +102,10 @@ namespace GameEngine
                         new Position(endX, endY)
                     };
 
-                    //Check if specified squad are occupied
-                    foreach (Boat ship in Boats)
+                    // Check so positions is free to move boat to
+                    if (!IsAnyBoatHere(positions))
                     {
-                        if(ship.AreYouHere(positions))
-                        {
-                            isOpen = true;
-                            continue;
-                        }
-                    }
-
-                    // Try to set position
-                    if (!isOpen)
-                    {
-                        try
-                        {
-                            boat.SetPositions(positions);
-                        }
-                        catch
-                        {
-                            isOpen = true;
-                        }
+                        boat.SetPositions(positions);
                     }
                 }
             }
@@ -173,6 +155,25 @@ namespace GameEngine
             
 
             return false;
+        }
+
+        /// <summary>
+        /// Is positions free to move a Boat object to?
+        /// </summary>
+        /// <param name="positions">Positions to check (Position[])</param>
+        /// <returns>Validate result (bool)</returns>
+        private bool IsAnyBoatHere(Position[] positions)
+        {
+            //Check if specified squad are occupied
+            foreach (Boat ship in Boats)
+            {
+                if (ship.AreYouHere(positions))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }
