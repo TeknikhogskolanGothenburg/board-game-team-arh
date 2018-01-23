@@ -171,5 +171,24 @@ namespace GameEngine
 
             return false;
         }
+
+        /// <summary>
+        /// Do positions got any Boat object?
+        /// </summary>
+        /// <param name="position">Position to check (Position)</param>
+        /// <returns>Validate result (bool)</returns>
+        public bool IsAnyBoatHere(Position position)
+        {
+            //Check if specified squad are occupied
+            foreach (Boat boat in Boats)
+            {
+                if (boat.AreYouHere(position))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

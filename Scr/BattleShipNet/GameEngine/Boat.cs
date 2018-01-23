@@ -15,13 +15,13 @@ namespace GameEngine
                 return (int)Type;
             }
         }
-        public Position[] Hits { get; }
+        public List<Position> Hits { get; }
 
         public bool Sink
         {
             get
             {
-                if(Hits.Length == Size)
+                if(Hits.Count == Size)
                 {
                     return true;
                 }
@@ -38,7 +38,7 @@ namespace GameEngine
         {
             Type = newBoatType;
             Positions = new Position[2];
-            Hits = new Position[Size];
+            Hits = new List<Position>();
         }
 
         /// <summary>
@@ -134,7 +134,7 @@ namespace GameEngine
         {
             if (AreYouHere(position))
             {
-                Hits[Hits.Length] = position;
+                Hits.Add(position);
                 return true;
             }
 
