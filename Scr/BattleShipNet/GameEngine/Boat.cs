@@ -52,8 +52,8 @@ namespace GameEngine
             {
                 // Check so Boat not position over it's size
                 if (
-                    ((newPositions[1].Y - newPositions[0].Y) == Size || (newPositions[0].Y - newPositions[1].Y) == Size) &&
-                    ((newPositions[1].X - newPositions[0].X) == Size || (newPositions[0].X - newPositions[1].X) == Size)
+                    (newPositions[1].Y - newPositions[0].Y + 1) == Size || (newPositions[0].Y - newPositions[1].Y + 1) == Size ||
+                    (newPositions[1].X - newPositions[0].X + 1) == Size || (newPositions[0].X - newPositions[1].X + 1) == Size
                 )
                 {
                     // Position[1] should be largest, if it's not switch
@@ -117,7 +117,7 @@ namespace GameEngine
         /// <returns>Validate result (bool)</returns>
         public bool AreYouHere(Position position)
         {
-            if (position.X >= Positions[0].X && position.X <= Positions[1].X && position.Y >= Positions[0].Y && position.Y <= Positions[1].Y)
+            if ((Positions[0] != null && Positions[1] != null) && position.X >= Positions[0].X && position.X <= Positions[1].X && position.Y >= Positions[0].Y && position.Y <= Positions[1].Y)
             {
                 return true;
             }
