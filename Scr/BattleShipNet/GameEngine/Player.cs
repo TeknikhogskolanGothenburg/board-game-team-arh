@@ -56,7 +56,6 @@ namespace GameEngine
         /// </summary>
         private void PositionsBoats()
         {
-            //Random class creation stolen from http://stackoverflow.com/a/18267477/106356
             Random rand = new Random(Guid.NewGuid().GetHashCode());
 
             foreach (Boat boat in Boats)
@@ -67,28 +66,23 @@ namespace GameEngine
 
                 Position[] positions = new Position[2];
 
-                while (boat.Positions == null)
+                while (boat.Positions[0] == null || boat.Positions[1] == null)
                 {
                     int startX = rand.Next(1, 11);
                     int startY = rand.Next(1, 11);
-                    int endY = startY, endX = startX;
-                    int orientation = rand.Next(1, 101) % 2; //0 for Horizontal
+                    int endY = startY;
+                    int endX = startX;
 
+                    int orientation = rand.Next(1, 101) % 2; //0 for Horizontal
 
                     // Calculate endY (Horizontal) or endX (Vertical)
                     if (orientation == 0)
                     {
-                        for (int i = 1; i < boat.Size; i++)
-                        {
-                            endY++;
-                        }
+                        endY += boat.Size -1;
                     }
                     else
                     {
-                        for (int i = 1; i < boat.Size; i++)
-                        {
-                            endX++;
-                        }
+                        endX += boat.Size -1;
                     }
 
                     //We cannot place Boats beyond the boundaries of the board
@@ -102,8 +96,10 @@ namespace GameEngine
                         new Position(endX, endY)
                     };
 
+                    bool test = IsAnyBoatHere(positions);
+
                     // Check so positions is free to move boat to
-                    if (!IsAnyBoatHere(positions))
+                    if (!test)
                     {
                         boat.SetPositions(positions);
                     }
@@ -165,15 +161,34 @@ namespace GameEngine
         private bool IsAnyBoatHere(Position[] positions)
         {
             //Check if specified squad are occupied
-            foreach (Boat ship in Boats)
+            foreach (Boat boat in Boats)
             {
-                if (ship.AreYouHere(positions))
+                if (boat.AreYouHere(positions))
                 {
-                    return false;
+                    return true;
                 }
             }
 
-            return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Do positions got any Boat object?
+        /// </summary>
+        /// <param name="position">Position to check (Position)</param>
+        /// <returns>Validate result (bool)</returns>
+        public bool IsAnyBoatHere(Position position)
+        {
+            //Check if specified squad are occupied
+            foreach (Boat boat in Boats)
+            {
+                if (boat.AreYouHere(position))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
