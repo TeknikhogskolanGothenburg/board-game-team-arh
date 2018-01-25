@@ -1,0 +1,61 @@
+@model BattleShipNet.Models.GameModel
+@using GameEngine
+
+@helper makeBoard(string id, Player player, bool yours = false)
+{
+    <div id="@id" class="playerboard">
+        <div class="topHeader">
+            @for (var i = 1; i <= 10; i++)
+            {
+                <div class="square" id="@id/_topheader/@i">@i</div>
+            }
+        </div>
+        <div class="leftHeader">
+            @for (var i = 0; i < Model.Letters.Count; i++)
+            {
+                <div class="square" id="@(id + "_leftheader" + i)">@Model.Letters.ElementAt(i)</div>
+            }
+        </div>
+        <div class="squares">
+            @for (var x = 0; x < 10; x++)
+            {
+                for (var y = 0; y < 10; y++)
+                {
+                    string classes = Model.PositionsClasses(player, new Position(x, y), yours);
+
+                    if (!yours)
+                    {
+                        <a href="/Home/Shoot?x=@(x)&amp;y=@(y)">
+                            <div id="s@(x + y)" class="square @classes"></div>
+                        </a>
+                    }
+                    else
+                    {
+                        <div id="s@(x + y)" class="square @classes"></div>
+                    }
+                }
+            }
+        </div>
+    </div>
+}
+
+@{
+    ViewBag.Title = "Game";
+}
+@section Styles {
+    <link href="~/Content/battleship.css" rel="stylesheet" type="text/css" />
+}
+@section JavaScript {
+    <!--script type="text/javascript" src="battleship.js"></script-->
+}
+
+<div id="instructionsArea">
+	<p id="instructions">Just a example text, until we know what to write here! Try to sink every battleship!</p>
+</div>
+
+@Html.ValidationSummary()
+
+<div id="playerboards">
+    @makeBoard("yourboard", Model.YourPlayer, true)
+    @makeBoard("enemyboard", Model.EnemyPlayer)
+</div>

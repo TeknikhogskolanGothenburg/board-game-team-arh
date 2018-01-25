@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 
 namespace GameEngine
 {
     public class GameBoard
     {
         public Player[] Players { get; }
-        public string GameKey { get; }
+        public string GameKey { get; set; }
         public int Turn { get; private set; }
 
         /// <summary>
@@ -23,7 +22,7 @@ namespace GameEngine
                 new Player()
             };
 
-            GameKey = GenerateGameKey();
+            Turn = 1;
         }
 
         /// <summary>
@@ -53,7 +52,7 @@ namespace GameEngine
                 }
                 else
                 {
-                    throw new Exception("Position is already hit");
+                    throw new Exception("Position is already hit!");
                 }
             }
             else
@@ -82,19 +81,6 @@ namespace GameEngine
 
             winner = null;
             return false;
-        }
-
-        /// <summary>
-        /// Generate and returns a random game key
-        /// </summary>
-        /// <returns>Random game key (string)</returns>
-        private string GenerateGameKey()
-        {
-            string gameKey = Guid.NewGuid().ToString();
-            gameKey = Regex.Replace(gameKey, @"[^0-9a-zA-Z]+", "");
-            gameKey = gameKey.Substring(0,6);
-
-            return gameKey;
         }
     }
 }

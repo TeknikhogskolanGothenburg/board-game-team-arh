@@ -35,14 +35,14 @@ namespace GameEngine
         {
             AlreadyHitPositions = new List<Position>();
 
-            Boats = new Boat[10] {
+            Boats = new Boat[7] {
                 new Boat(BoatType.Battleship),
                 new Boat(BoatType.Cruiser),
-                new Boat(BoatType.Cruiser),
+                //new Boat(BoatType.Cruiser),
                 new Boat(BoatType.Destroyer),
                 new Boat(BoatType.Destroyer),
-                new Boat(BoatType.Destroyer),
-                new Boat(BoatType.Submarine),
+                //new Boat(BoatType.Destroyer),
+                //new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine)
@@ -105,6 +105,27 @@ namespace GameEngine
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// Check positions for Boats and hits
+        /// </summary>
+        /// <returns>Square object with data</returns>
+        public Square CheckPosition(Position position)
+        {
+            Square square = new Square();
+
+            if (IsAnyBoatHere(position))
+            {
+                square.HaveBoat = true;
+            }
+
+            if (IsPositionAlreadyHit(position))
+            {
+                square.HaveBeenHit = true;
+            }
+
+            return square;
         }
 
         /// <summary>

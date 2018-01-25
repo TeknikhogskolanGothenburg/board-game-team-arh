@@ -8,8 +8,8 @@ namespace BattleShipNet.Models
 {
     public class GameModel
     {
-        private GameBoard gameBoard;
-        private List<List<Square>>[] playersBoard;
+        public GameBoard gameBoard { get; }
+        public List<string> Letters { get; }
 
         /// <summary>
         /// Properties returning session player id - get
@@ -18,7 +18,7 @@ namespace BattleShipNet.Models
         {
             get
             {
-                return (int)HttpContext.Current.Session["playerId"];
+                return (int)HttpContext.Current.Session["PlayerId"];
             }
         }
 
@@ -55,102 +55,42 @@ namespace BattleShipNet.Models
             }
         }
 
-        /// <summary>
-        /// Properties returning session player board
-        /// </summary>
-        public List<List<Square>> YourPlayerBoard {
-            get
-            {
-                return PrepareBoard(YourPlayerId);
-            }
+        public GameModel(GameBoard newGameBoard)
+        {
+            gameBoard = newGameBoard;
+
+            Letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
         }
 
         /// <summary>
-        /// Properties returning enemy player board
+        /// Return position information in form of css classes
         /// </summary>
-        public List<List<Square>> EnemyPlayerBoard
+        /// <param name="player">Player object to get position info from</param>
+        /// <returns>String with valid css classes</returns>
+        public string PositionsClasses(Player player, Position position, bool showBoats = false)
         {
-            get
+            Square square = player.CheckPosition(position);
+
+            string classes = "";
+
+            if (square.HaveBoat)
             {
-                return PrepareBoard(EnemyPlayerId);
-            }
-        }
-
-        /// <summary>
-        /// Default constructor
-        /// </summary>
-        public GameModel()
-        {
-            gameBoard = new GameBoard();
-
-            playersBoard = new List<List<Square>>[2]
-            {
-                CreateBoard(0),
-                CreateBoard(1)
-            };
-
-        }
-
-        /// <summary>
-        /// Create a player board
-        /// </summary>
-        /// <param name="playerId">Player id which to make board for (int)</param>
-        /// <returns>Player board (List of List of Square objects)</returns>
-        private List<List<Square>> CreateBoard(int playerId)
-        {
-            List<List<Square>> playerBoard = new List<List<Square>>();
-            Player player = gameBoard.Players[playerId];
-
-            for (int x = 0; x < 10; x++)
-            {
-                List<Square> column = new List<Square>();
-                for (int y = 0; y < 10; y++)
+                if (showBoats)
                 {
-                    Square square = new Square();
-                    square.PositionData = new Position(x, y);
-
-                    // Check if any boat is in this square
-                    foreach (Boat boat in player.Boats)
-                    {
-                        if (boat.AreYouHere(square.PositionData))
-                        {
-                            square.HaveBoat = true;
-                            continue;
-                        }
-                    }
-
-                    column.Add(square);
+                    classes = " haveBoat";
                 }
-                playerBoard.Add(column);
-            }
 
-            return playerBoard;
-        }
-
-        /// <summary>
-        /// Prepare and update a player board
-        /// </summary>
-        /// <param name="playerId">Player id which to prepare board for (int)</param>
-        /// <returns>Player board (List of List of Square objects)</returns>
-        private List<List<Square>> PrepareBoard(int playerId)
-        {
-            List<List<Square>> playerBoard = playersBoard[playerId];
-
-            Player player = gameBoard.Players[playerId];
-
-            foreach (List<Square> column in playerBoard)
-            {
-                foreach (Square square in column)
+                if (square.HaveBeenHit)
                 {
-                    if (!square.HaveBeenHit)
-                    {
-                        // Is position hit already?
-                        square.HaveBeenHit = player.IsPositionAlreadyHit(square.PositionData);
-                    }
+                    classes += " boatHit";
                 }
             }
+            else if (square.HaveBeenHit)
+            {
+                classes = " hit";
+            }
 
-            return playerBoard;
+            return classes;
         }
     }
 }
