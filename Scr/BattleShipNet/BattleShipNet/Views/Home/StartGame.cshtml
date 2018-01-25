@@ -7,8 +7,11 @@
 <form>
     Name:<br>
     <input type="text" name="Name"><br>
-    Gamekey:<br>
-    <input type="text" name="GameKey">
+    @if (ViewBag.ToDo == "Join")
+    {
+        <span>Gamekey:</span><br>
+        <input type = "text" name="GameKey">
+    }
     <input type="submit" value="Start"><br>
     
    

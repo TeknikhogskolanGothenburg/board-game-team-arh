@@ -16,7 +16,7 @@ namespace BattleShipNet.Controllers
         // GET: Home
         public ActionResult StartGame(String toDo)
         {
-            ViewBag.toDo = toDo;
+            ViewBag.ToDo = toDo;
             return View();
         }
     }
