@@ -92,5 +92,24 @@ namespace BattleShipNet.Models
 
             return classes;
         }
+
+        public bool Shoot(string x, string y)
+        {
+            int positionX;
+            int positionY;
+
+            if (int.TryParse(x, out positionX) && int.TryParse(y, out positionY))
+            {
+                if (positionX <= 10 && positionY <= 10)
+                {
+                    Position position = new Position(positionX, positionY);
+
+                    bool result = gameBoard.Shoot(EnemyPlayerId, position);
+                    return result;
+                }
+            }
+
+            throw new Exception("You need to hit one existing positions");
+        }
     }
 }

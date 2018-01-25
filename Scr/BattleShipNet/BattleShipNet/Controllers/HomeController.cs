@@ -11,11 +11,15 @@ namespace BattleShipNet.Controllers
     public class HomeController : Controller
     {
         private static GameBoards games;
+        private static List<Exception> errorsKeeper;
 
         public HomeController()
         {
             if (games == null)
+            {
                 games = new GameBoards();
+                errorsKeeper = new List<Exception>();
+            }  
         }
 
         // GET: Home
@@ -37,19 +41,13 @@ namespace BattleShipNet.Controllers
         // Get: Game
         public ActionResult Game()
         {
-            if (Session["GameKey"] != null)
+            InsertErrors();
+
+            GameModel gameModel = GetSessionGame();
+
+            if (gameModel != null)
             {
-                string gameKey = Session["GameKey"].ToString();
-                if (games.DoesItExist(gameKey))
-                {
-                    GameModel gameModel = new GameModel(games.Get(gameKey));
-                    return View(gameModel);
-                }
-                else
-                {
-                    Session["GameKey"] = null;
-                    Session["PlayerID"] = null;
-                }
+                return View(gameModel);
             }
 
             return RedirectToAction("Index", "Home");
@@ -59,33 +57,20 @@ namespace BattleShipNet.Controllers
         public ActionResult Shoot(string x, string y)
         {
             GameModel gameModel = GetSessionGame();
+
             if (gameModel != null)
             {
-                int positionX;
-                int positionY;
-
-                if (int.TryParse(x, out positionX) && int.TryParse(y, out positionY))
+                try
                 {
-                    if (positionX <= 10 && positionY <= 10)
-                    {
-                        Position position = new Position(positionX, positionY);
-
-                        try
-                        {
-                            gameModel.gameBoard.Shoot(gameModel.EnemyPlayerId, position);
-                            Session["PlayerId"] = gameModel.gameBoard.Turn;
-                        }
-                        catch (Exception ex)
-                        {
-                            ModelState.AddModelError(string.Empty, ex);
-                        }
-
-                        return RedirectToAction("game", "Home");
-                    }
+                    gameModel.Shoot(x, y);
+                    Session["PlayerId"] = gameModel.gameBoard.Turn;
+                }
+                catch(Exception ex)
+                {
+                    errorsKeeper.Add(ex);
                 }
 
-                ModelState.AddModelError(string.Empty, "You need to hit one existing positions");
-                return RedirectToAction("game", "Home");
+                return RedirectToAction("Game", "Home");
             }
 
             return RedirectToAction("Index", "Home");
@@ -109,6 +94,12 @@ namespace BattleShipNet.Controllers
             }
 
             return null;
+        }
+
+        private void InsertErrors()
+        {
+            ViewBag.Errors = errorsKeeper;
+            errorsKeeper = new List<Exception>();
         }
     }
 }
