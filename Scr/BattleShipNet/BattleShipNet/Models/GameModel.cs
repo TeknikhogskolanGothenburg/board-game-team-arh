@@ -93,6 +93,12 @@ namespace BattleShipNet.Models
             return classes;
         }
 
+        /// <summary>
+        /// Prepare Shoot before send it to GameEngine
+        /// </summary>
+        /// <param name="x">Position X (string)</param>
+        /// <param name="y">Position Y (string)</param>
+        /// <returns>Result</returns>
         public bool Shoot(string x, string y)
         {
             int positionX;
@@ -100,7 +106,7 @@ namespace BattleShipNet.Models
 
             if (int.TryParse(x, out positionX) && int.TryParse(y, out positionY))
             {
-                if (positionX <= 10 && positionY <= 10)
+                if (positionX >= 1 && positionX <= 10 && positionY >= 1 && positionY <= 10)
                 {
                     Position position = new Position(positionX, positionY);
 

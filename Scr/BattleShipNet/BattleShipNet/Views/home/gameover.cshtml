@@ -1,0 +1,21 @@
+﻿@model BattleShipNet.Models.GameModel
+
+@{
+    ViewBag.Title = "Game Over!";
+}
+
+<h2>Game Ended</h2>
+
+@if (ViewBag.Winner == Model.YourPlayer)
+{
+    <div class="alert alert-success"><h3>Congratulations!</h3> You win this round, you sink every of your enemy's ships!</div>
+}
+else
+{
+    <div class="alert alert-warning"><h3>Game Over!</h3> You lost this round, your enemy sink every ship of yours!</div>
+}
+
+@{
+    // Test code
+    Session["PlayerID"] = ((int)Session["PlayerID"] == 0) ? 1 : 0;
+}

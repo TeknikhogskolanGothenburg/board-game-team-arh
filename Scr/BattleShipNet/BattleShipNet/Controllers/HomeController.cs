@@ -11,34 +11,49 @@ namespace BattleShipNet.Controllers
     public class HomeController : Controller
     {
         private static GameBoards games;
-        private static List<Exception> errorsKeeper;
+        private static List<string> errors;
 
+        /// <summary>
+        /// Deafult constructor
+        /// </summary>
         public HomeController()
         {
             if (games == null)
             {
                 games = new GameBoards();
-                errorsKeeper = new List<Exception>();
-            }  
+                errors = new List<string>();
+            }
         }
 
-        // GET: Home
+        /// <summary>
+        /// Action for /Home/index.cshtml
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult Index()
         {
-            ViewBag.GameKey = games.New();
-            Session["GameKey"] = ViewBag.GameKey;
+            string gameKey = games.New();
+            // Test code
+            Session["GameKey"] = gameKey;
             Session["PlayerId"] = 1;
+            // Test code end
             return View();
         }
 
-        // GET: StartGame
-        public ActionResult StartGame(String toDo)
+        /// <summary>
+        /// Action for /Home/startgame.cshtml
+        /// </summary>
+        /// <param name="toDo">Join or new game (string)</param>
+        /// <returns>View</returns>
+        public ActionResult StartGame(string toDo)
         {
             ViewBag.ToDo = toDo;
             return View();
         }
 
-        // Get: Game
+        /// <summary>
+        /// Action for /Home/game.cshtml
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult Game()
         {
             InsertErrors();
@@ -47,13 +62,21 @@ namespace BattleShipNet.Controllers
 
             if (gameModel != null)
             {
+                Player winner;
+                if (gameModel.gameBoard.IsGameEnd(out winner))
+                {
+                    return RedirectToAction("GameOver", "Home");
+                }
+
                 return View(gameModel);
             }
 
             return RedirectToAction("Index", "Home");
         }
 
-        // Get: Shoot
+        /// <summary>
+        /// Action for Shoot's
+        /// </summary>
         public ActionResult Shoot(string x, string y)
         {
             GameModel gameModel = GetSessionGame();
@@ -62,12 +85,23 @@ namespace BattleShipNet.Controllers
             {
                 try
                 {
-                    gameModel.Shoot(x, y);
+                    bool result = gameModel.Shoot(x, y);
+
+                    // Test code
                     Session["PlayerId"] = gameModel.gameBoard.Turn;
+
+                    /*if(result)
+                    {
+                        Player winner;
+                        if (gameModel.gameBoard.IsGameEnd(out winner))
+                        {
+                            
+                        }
+                    }*/
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
-                    errorsKeeper.Add(ex);
+                    errors.Add(ex.Message);
                 }
 
                 return RedirectToAction("Game", "Home");
@@ -76,6 +110,35 @@ namespace BattleShipNet.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        /// <summary>
+        /// Action for /Home/gameover.cshtml
+        /// </summary>
+        /// <returns>View</returns>
+        public ActionResult GameOver()
+        {
+            GameModel gameModel = GetSessionGame();
+
+            if (gameModel != null)
+            {
+                Player winner = new Player();
+                if (gameModel.gameBoard.IsGameEnd(out winner))
+                {
+                    ViewBag.Winner = winner;
+                    return View(gameModel);
+                }
+                else
+                {
+                    return RedirectToAction("Game", "Home");
+                }
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+    
+        /// <summary>
+        /// Takes care get GameBoard from session GameKey
+        /// </summary>
+        /// <returns>GameModel object with GameBoard</returns>
         private GameModel GetSessionGame()
         {
             if (Session["GameKey"] != null)
@@ -96,10 +159,13 @@ namespace BattleShipNet.Controllers
             return null;
         }
 
+        /// <summary>
+        /// Method to help insert error message list to Views
+        /// </summary>
         private void InsertErrors()
         {
-            ViewBag.Errors = errorsKeeper;
-            errorsKeeper = new List<Exception>();
+            ViewBag.Errors = errors;
+            errors = new List<string>();
         }
     }
 }

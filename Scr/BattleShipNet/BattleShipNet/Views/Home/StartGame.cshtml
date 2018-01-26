@@ -1,18 +1,16 @@
-﻿
-@{
-    ViewBag.Title = "StartGame";
+﻿@{
+    ViewBag.Title = "Start Game";
 }
 
-<h2>StartGame</h2>
+<h2>Start Game</h2>
+
 <form>
     Name:<br>
-    <input type="text" name="Name"><br>
+    <input type="text" name="Name" /><br />
     @if (ViewBag.ToDo == "Join")
     {
-        <span>Gamekey:</span><br>
-        <input type = "text" name="GameKey">
+        <span>Gamekey:</span><br />
+        <input type = "text" name="GameKey" /><br />
     }
-    <input type="submit" value="Start"><br>
-    
-   
+    <input type="submit" value="Start" /><br />
 </form>
