@@ -12,7 +12,7 @@
             }
         </div>
         <div class="leftHeader">
-            @for (var i = 1; i <= Model.Letters.Count; i++)
+            @for (var i = 0; i < Model.Letters.Count; i++)
             {
                 <div class="square" id="@(id + "_leftheader" + i)">@Model.Letters.ElementAt(i)</div>
             }
