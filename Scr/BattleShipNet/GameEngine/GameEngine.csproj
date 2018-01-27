@@ -44,8 +44,8 @@
     <Compile Include="Enums\BoatType.cs" />
     <Compile Include="GameBoard.cs" />
     <Compile Include="GameBoards.cs" />
-    <Compile Include="Player.cs" />
     <Compile Include="Objects\Position.cs" />
+    <Compile Include="Player.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Objects\Square.cs" />
   </ItemGroup>
