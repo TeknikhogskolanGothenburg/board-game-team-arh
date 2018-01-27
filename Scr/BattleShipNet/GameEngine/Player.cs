@@ -9,8 +9,8 @@ namespace GameEngine
     public class Player
     {
         public string Name { get; set; }
-        public Boat[] Boats{ get; }
-        public List<Position> AlreadyHitPositions{ get; private set; }
+        public Boat[] Boats { get; }
+        public List<Position> AlreadyHitPositions { get; private set; }
 
         public bool HasPlayerLost
         {
@@ -78,11 +78,11 @@ namespace GameEngine
                     // Calculate endY (Horizontal) or endX (Vertical)
                     if (orientation == 0)
                     {
-                        endY += boat.Size -1;
+                        endY += boat.Size - 1;
                     }
                     else
                     {
-                        endX += boat.Size -1;
+                        endX += boat.Size - 1;
                     }
 
                     //We cannot place Boats beyond the boundaries of the board
@@ -135,15 +135,15 @@ namespace GameEngine
         /// <returns>Validate result (bool)</returns>
         public bool IsPositionAlreadyHit(Position position)
         {
-             foreach(Position hitPosition in AlreadyHitPositions)
-             {
-                if(position.X == hitPosition.X && position.Y == hitPosition.Y)
+            foreach (Position hitPosition in AlreadyHitPositions)
+            {
+                if (position.X == hitPosition.X && position.Y == hitPosition.Y)
                 {
                     return true;
                 }
-             }
+            }
 
-             return false;
+            return false;
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace GameEngine
         /// <returns>Validate result (bool)</returns>
         public bool IsABoatHit(Position position)
         {
-            if(IsPositionAlreadyHit(position))
+            if (IsPositionAlreadyHit(position))
             {
                 throw new Exception("Position is already hit, try other position!");
             }
@@ -169,7 +169,7 @@ namespace GameEngine
                     }
                 }
             }
-            
+
 
             return false;
         }
