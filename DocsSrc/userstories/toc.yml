@@ -1,0 +1,4 @@
+- name: Player stories
+  href: playerstories.md
+- name: Site visitor stories
+  href: sitevisitorstories.md
