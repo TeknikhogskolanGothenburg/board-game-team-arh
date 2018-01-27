@@ -10,6 +10,7 @@ namespace GameEngine
     {
         public Player[] Players { get; }
         public string GameKey { get; set; }
+        public bool PrivateGame { get; set; }
         public int Turn { get; private set; }
 
         /// <summary>
@@ -17,6 +18,8 @@ namespace GameEngine
         /// </summary>
         public GameBoard()
         {
+            PrivateGame = false;
+
             Players = new Player[2] {
                 new Player(),
                 new Player()
@@ -73,7 +76,7 @@ namespace GameEngine
                 winner = Players[1];
                 return true;
             }
-            else if (Players[1].HasPlayerLost)
+            if (Players[1].HasPlayerLost)
             {
                 winner = Players[0];
                 return true;

@@ -31,9 +31,12 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult Index()
         {
-            string gameKey = games.New();
             // Test code
-            Session["GameKey"] = gameKey;
+            GameBoard gameBoard = new GameBoard();
+            games.Add(gameBoard);
+            gameBoard.Players[0].Name = "Hans";
+            gameBoard.Players[1].Name = "Greta";
+            Session["GameKey"] = gameBoard.GameKey;
             Session["PlayerId"] = 1;
             // Test code end
             return View();
@@ -44,10 +47,11 @@ namespace BattleShipNet.Controllers
         /// </summary>
         /// <param name="toDo">Join or new game (string)</param>
         /// <returns>View</returns>
-        public ActionResult StartGame(string toDo)
+        public ActionResult StartGame(string toDo, string gameKey = null)
         {
             ViewBag.ToDo = toDo;
-            return View();
+            ViewBag.GameKey = gameKey;
+            return View(games);
         }
 
         /// <summary>

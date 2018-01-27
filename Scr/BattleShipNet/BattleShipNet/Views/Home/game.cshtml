@@ -2,19 +2,25 @@
 @using GameEngine
 @using BattleShipNet.Helpers
 
-@helper makeBoard(string id, Player player, bool yours = false)
+@helper makeBoard(int playerId)
 {
-    <div id="@id" class="playerboard">
+    bool yours = (playerId == Model.YourPlayerId);
+    string id = (yours) ? "your" : "enemy";
+    Player player = Model.gameBoard.Players[playerId];
+
+    <div id="@(id)board" class="playerboard">
+        <h2 class="playerName">@player.Name</h2>
+
         <div class="topHeader">
             @for (var i = 1; i <= 10; i++)
             {
-                <div class="square" id="@id/_topheader/@i">@i</div>
+                <div class="square">@i</div>
             }
         </div>
         <div class="leftHeader">
             @for (var i = 0; i < Model.Letters.Count; i++)
             {
-                <div class="square" id="@(id + "_leftheader" + i)">@Model.Letters.ElementAt(i)</div>
+                <div class="square">@Model.Letters.ElementAt(i)</div>
             }
         </div>
         <div class="squares">
@@ -57,6 +63,6 @@
 @MessageHandler.Alert("danger", (List<string>)ViewBag.Errors)
 
 <div id="playerboards">
-    @makeBoard("yourboard", Model.YourPlayer, true)
-    @makeBoard("enemyboard", Model.EnemyPlayer)
+    @makeBoard(Model.YourPlayerId)
+    @makeBoard(Model.EnemyPlayerId)
 </div>

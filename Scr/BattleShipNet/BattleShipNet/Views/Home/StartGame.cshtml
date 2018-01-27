@@ -1,4 +1,6 @@
-﻿@{
+﻿@model GameEngine.GameBoards
+
+@{
     ViewBag.Title = "Start Game";
 }
 
@@ -6,11 +8,28 @@
 
 <form>
     Name:<br>
-    <input type="text" name="Name" /><br />
-    @if (ViewBag.ToDo == "Join")
+    <input type="text" name="name" /><br />
+    @if (ViewBag.ToDo == "Join specific game")
     {
-        <span>Gamekey:</span><br />
-        <input type = "text" name="GameKey" /><br />
+        <label>
+            Gamekey:<br />
+            <input type="text" name="gameKey" value="@ViewBag.GameKey" />
+        </label>
     }
+    else if (ViewBag.ToDo == "Join open game")
+    {
+        <label>
+            Select game to join:<br />
+            @Html.DropDownList("GameKey", new SelectList(Model.OpenGames, "GameKey", "Players[0].Name", null))<br />
+        </label>
+    }
+    else
+    {
+        <label>
+            Private game:
+            <input type="checkbox" name="privateGame" />
+        </label>
+    }
+    <br /><br />
     <input type="submit" value="Start" /><br />
 </form>

@@ -4,18 +4,41 @@
     ViewBag.Title = "Game Over!";
 }
 
+
 <h2>Game Ended</h2>
 
-@if (ViewBag.Winner == Model.YourPlayer)
-{
-    <div class="alert alert-success"><h3>Congratulations!</h3> You win this round, you sink every of your enemy's ships!</div>
-}
-else
-{
-    <div class="alert alert-warning"><h3>Game Over!</h3> You lost this round, your enemy sink every ship of yours!</div>
+@{
+    string bgClass;
+    string alertClass;
+    string header;
+    string message;
+
+    if (ViewBag.Winner == Model.YourPlayer)
+    {
+        bgClass = "gamewon";
+        alertClass = "success";
+        header = "Congratulations!";
+        message = "You win this round, you sink every of your enemy's ships!";
+    }
+    else
+    {
+        bgClass = "gameover";
+        alertClass = "warning";
+        header = "Game Over!";
+        message = "You lost this round, your enemy sink every ship of yours!";
+    }
 }
 
-@{
-    // Test code
-    Session["PlayerID"] = ((int)Session["PlayerID"] == 0) ? 1 : 0;
-}
+<div class="game-bg @(bgClass)-bg">
+    <div class="alert alert-@(alertClass)"><h3>@header</h3> @message</div>
+    <form action="/Home/StartGame">
+        <input type="submit" name="toDo" value="New game" />
+        <input type="submit" name="toDo" value="Join open game" />
+        <input type="submit" name="toDo" value="Join specific game">
+    </form>
+</div>
+
+    @{
+        // Test code
+        Session["PlayerID"] = ((int)Session["PlayerID"] == 0) ? 1 : 0;
+    }

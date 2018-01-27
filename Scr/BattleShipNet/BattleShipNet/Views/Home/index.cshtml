@@ -3,9 +3,12 @@
     ViewBag.Title = "index";
 }
 
-<form action="/Home/StartGame">
-    <input type="submit" name="toDo" value="New Game" />
-    <input type="submit" name="toDo" value="Join Game" />
-</form>
+<div class="game-bg index-bg">
+    <form action="/Home/StartGame">
+        <input type="submit" name="toDo" value="New game" />
+        <input type="submit" name="toDo" value="Join open game" />
+        <input type="submit" name="toDo" value="Join specific game">
+    </form>
+</div>
 
 <a href="/Home/Game">Test game</a>

@@ -12,6 +12,27 @@ namespace GameEngine
         public List<GameBoard> Games { get; }
 
         /// <summary>
+        /// Return List of GameBoards which is open to join
+        /// </summary>
+        public List<GameBoard> OpenGames
+        {
+            get
+            {
+                List<GameBoard> openGameKeys = new List<GameBoard>();
+
+                foreach (GameBoard gameBoard in Games)
+                {
+                    if (!gameBoard.PrivateGame && gameBoard.Players[1].Name == null)
+                    {
+                        openGameKeys.Add(gameBoard);
+                    }
+                }
+
+                return openGameKeys;
+            }
+        }
+
+        /// <summary>
         /// Default constructor
         /// </summary>
         public GameBoards()
@@ -20,22 +41,28 @@ namespace GameEngine
         }
 
         /// <summary>
-        /// Start new GameBoard
+        /// Add new GameBoard
         /// </summary>
-        /// <returns>Game key (string)</returns>
-        public string New()
+        /// <param name="newGameBoard">GameBoard object to add</param>
+        /// <returns>Result (bool)</returns>
+        public bool Add(GameBoard newGameBoard)
         {
-            GameBoard game = new GameBoard();
-            string gameKey;
-            do
+            if(newGameBoard != null)
             {
-                gameKey = GenerateGameKey();
-            } while (DoesItExist(gameKey));
+                string gameKey;
 
-            game.GameKey = gameKey;
-            Games.Add(game);
+                do
+                {
+                    gameKey = GenerateGameKey();
+                } while (DoesItExist(gameKey));
 
-            return gameKey;
+                newGameBoard.GameKey = gameKey;
+                Games.Add(newGameBoard);
+
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -52,7 +79,7 @@ namespace GameEngine
         /// Check if GameBoard exist
         /// </summary>
         /// <param name="GameKey">Game key (string)</param>
-        /// <returns></returns>
+        /// <returns>Validation result</returns>
         public bool DoesItExist(string gameKey)
         {
             return (Get(gameKey) != null);

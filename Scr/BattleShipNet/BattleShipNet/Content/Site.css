@@ -23,3 +23,53 @@ textarea {
 .alert ul {
     margin: 0.5rem auto;
 }
+
+a.logotype {
+    background: url(Images/battleship.png) no-repeat top left;
+    display: block;
+    width: 178px;
+    height: 34px;
+    text-indent: -9999px; /* hides the link text */
+}
+
+.game-bg {
+    width: 714px;
+    height: 500px;
+    margin: 0 auto;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.index-bg {
+    padding-top: 150px;
+    background: url(Images/index-bg.png) no-repeat;
+}
+
+.game-bg input[type=submit] {
+    width: 300px;
+    padding: 20px;
+    border-radius: 5px;
+    background: rgba(229, 229, 229, 0.9);
+    color: #00C2F3;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+    margin: 5px auto;
+}
+
+.gameover-bg {
+    background: url(Images/gameover-bg.png) no-repeat;
+}
+
+.gamewon-bg {
+    background: url(Images/gamewon-bg.png) no-repeat;
+}
+
+.gameover-bg , .gamewon-bg {
+    padding-top: 30px;
+}
+
+.gameover-bg .alert, .gamewon-bg .alert {
+    border-radius: unset;
+    opacity: 0.80;
+}
