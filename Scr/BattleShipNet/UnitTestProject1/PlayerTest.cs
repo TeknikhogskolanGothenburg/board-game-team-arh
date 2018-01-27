@@ -88,5 +88,42 @@ namespace UnitTestProject1
             Assert.AreEqual(true, result);
         }
 
+        [TestMethod]
+        public void AreYouHere()
+        {
+            //Arrange
+            GameBoard gameBoard = new GameBoard();
+            Player player = gameBoard.Players[0];
+            Boat boat = new Boat(BoatType.Submarine);
+            Position setPos1 = new Position(7, 5);
+            boat.Positions[0] = setPos1;
+            Position setPos2 = new Position(7, 5);
+
+            // Act
+            var result = boat.AreYouHere(setPos2);
+
+            // Assert
+            Assert.AreEqual(true, result);
+        }
+
+        [TestMethod]
+        public void IsItAHit()
+        {
+            //Arrange
+            GameBoard gameBoard = new GameBoard();
+            Player player = gameBoard.Players[0];
+            Boat boat = new Boat(BoatType.Submarine);
+            Position setPos1 = new Position(7, 5);
+            boat.Positions[0] = setPos1;
+            Position shootPos1 = new Position(7, 5);
+            boat.AreYouHere(shootPos1);
+
+            // Act
+            var result = boat.IsItAHit(shootPos1);
+
+            // Assert
+            Assert.AreEqual(true, result);
+        }
+
     }
 }
