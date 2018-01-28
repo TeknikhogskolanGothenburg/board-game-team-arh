@@ -33,6 +33,18 @@
     text-align:center;
 }
 
+.playerboard[data-turn='true'] .playerName:before {
+    content: "\e184";
+    font-family: 'Glyphicons Halflings';
+    font-size: 23px;
+    margin-right: 5px;
+    color: black;
+}
+
+.playerboard[data-turn='true'] .playerName {
+    color: red;
+}
+
 .playerboard .topHeader {
     padding-left: 40px;
 }
@@ -69,4 +81,9 @@
 
 .square.boatHit:before {
     color: red;
+}
+
+.playerboard[data-turn='true'] .squares a {
+    pointer-events: none;
+    cursor: default;
 }

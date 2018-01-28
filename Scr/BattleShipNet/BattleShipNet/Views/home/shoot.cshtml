@@ -1,0 +1,29 @@
+﻿@model BattleShipNet.Models.GameModel
+@using BattleShipNet.Helpers;
+@using GameEngine;
+
+@{
+    Layout = null;
+
+    Player winner;
+    Dictionary<string, object> json = new Dictionary<string, object>();
+
+    if (ViewBag.Result != null)
+    {
+        json.Add("result", ViewBag.Result);
+    }
+
+    json.Add("gameend", Model.Game.IsGameEnd(out winner));
+
+    json.Add("turn", Model.Game.Turn);
+
+    if ((ViewBag.Errors != null) && ViewBag.Errors.Count > 0)
+    {
+        json.Add("Errors", ViewBag.Errors);
+    }
+}
+
+{
+    @Html.Raw(JsonHelper.Render(json))
+}
+

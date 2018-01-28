@@ -8,7 +8,7 @@ namespace BattleShipNet.Models
 {
     public class GameModel
     {
-        public GameBoard gameBoard { get; }
+        public GameBoard Game { get; }
         public List<string> Letters { get; }
 
         /// <summary>
@@ -40,7 +40,7 @@ namespace BattleShipNet.Models
         {
             get
             {
-                return gameBoard.Players[YourPlayerId];
+                return Game.Players[YourPlayerId];
             }
         }
 
@@ -51,13 +51,17 @@ namespace BattleShipNet.Models
         {
             get
             {
-                return gameBoard.Players[EnemyPlayerId];
+                return Game.Players[EnemyPlayerId];
             }
         }
 
+        /// <summary>
+        /// Constructor which takes GameBoard object
+        /// </summary>
+        /// <param name="newGameBoard">GameBoard object to make Model of</param>
         public GameModel(GameBoard newGameBoard)
         {
-            gameBoard = newGameBoard;
+            Game = newGameBoard;
 
             Letters = new List<string> { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
         }
@@ -110,7 +114,7 @@ namespace BattleShipNet.Models
                 {
                     Position position = new Position(positionX, positionY);
 
-                    bool result = gameBoard.Shoot(EnemyPlayerId, position);
+                    bool result = Game.Shoot(EnemyPlayerId, position);
                     return result;
                 }
             }

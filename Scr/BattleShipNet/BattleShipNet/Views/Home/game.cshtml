@@ -6,9 +6,10 @@
 {
     bool yours = (playerId == Model.YourPlayerId);
     string id = (yours) ? "your" : "enemy";
-    Player player = Model.gameBoard.Players[playerId];
+    string turn = (playerId == Model.Game.Turn) ? "true" : "false";
+    Player player = Model.Game.Players[playerId];
 
-    <div id="@(id)board" class="playerboard">
+    <div id="@(id)board" class="playerboard" data-turn="@turn" data-playerid="@playerId">
         <h2 class="playerName">@player.Name</h2>
 
         <div class="topHeader">
@@ -33,12 +34,12 @@
                     if (!yours)
                     {
                         <a href="/Home/Shoot?x=@(x)&amp;y=@(y)">
-                            <div id="s@(x)_@(y)" class="square @classes"></div>
+                            <div data-x="@x" data-y="@y" class="square @classes"></div>
                         </a>
                     }
                     else
                     {
-                        <div id="s@(x)_@(y)" class="square @classes"></div>
+                        <div data-x="@x" data-y="@y" class="square @classes"></div>
                     }
                 }
             }
@@ -52,8 +53,8 @@
 @section Styles {
     <link href="~/Content/battleship.css" rel="stylesheet" type="text/css" />
 }
-@section JavaScript {
-    <!--script type="text/javascript" src="battleship.js"></script-->
+@section Scripts {
+    <script type="text/javascript" src="~/Scripts/battleship.js"></script>
 }
 
 <div id="instructionsArea">

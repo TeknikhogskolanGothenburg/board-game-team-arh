@@ -21,6 +21,7 @@ namespace BattleShipNet.Helpers
                 TagBuilder div = new TagBuilder("div");
                 div.AddCssClass("alert alert-" + type);
                 div.Attributes.Add("role", "alert");
+                div.Attributes.Add("id", "alert-" + type);
 
                 TagBuilder ul = new TagBuilder("ul");
 

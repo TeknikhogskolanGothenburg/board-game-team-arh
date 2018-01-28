@@ -96,8 +96,10 @@
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\battleship.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
@@ -110,6 +112,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\JsonRender.cs" />
     <Compile Include="Helpers\MessageHandler.cs" />
     <Compile Include="Models\GameModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -127,6 +130,8 @@
     <Content Include="Views\Home\startgame.cshtml" />
     <Content Include="Views\Home\game.cshtml" />
     <Content Include="Views\Home\gameover.cshtml" />
+    <Content Include="Views\Home\shoot.cshtml" />
+    <Content Include="Views\Home\updategame.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

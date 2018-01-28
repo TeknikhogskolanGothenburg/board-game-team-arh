@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Net;
 using GameEngine;
 using BattleShipNet.Models;
 
@@ -34,6 +35,7 @@ namespace BattleShipNet.Controllers
             // Test code
             GameBoard gameBoard = new GameBoard();
             games.Add(gameBoard);
+            gameBoard.PrivateGame = false;
             gameBoard.Players[0].Name = "Hans";
             gameBoard.Players[1].Name = "Greta";
             Session["GameKey"] = gameBoard.GameKey;
@@ -67,10 +69,13 @@ namespace BattleShipNet.Controllers
             if (gameModel != null)
             {
                 Player winner;
-                if (gameModel.gameBoard.IsGameEnd(out winner))
+                if (gameModel.Game.IsGameEnd(out winner))
                 {
                     return RedirectToAction("GameOver", "Home");
                 }
+
+                // Test code
+                Session["PlayerId"] = gameModel.Game.Turn;
 
                 return View(gameModel);
             }
@@ -79,11 +84,30 @@ namespace BattleShipNet.Controllers
         }
 
         /// <summary>
+        /// Action for /Home/updategame.cshtml
+        /// </summary>
+        /// <returns>View</returns>
+        public ActionResult UpdateGame()
+        {
+            GameModel gameModel = GetSessionGame();
+
+            if (gameModel != null)
+            {
+                Response.ContentType = "application/json";
+                return View(gameModel);
+            }
+
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return null;
+        }
+
+        /// <summary>
         /// Action for Shoot's
         /// </summary>
         public ActionResult Shoot(string x, string y)
         {
             GameModel gameModel = GetSessionGame();
+            bool json = Request.Headers.Get("Accept").StartsWith("application/json");
 
             if (gameModel != null)
             {
@@ -91,41 +115,50 @@ namespace BattleShipNet.Controllers
                 {
                     bool result = gameModel.Shoot(x, y);
 
-                    // Test code
-                    Session["PlayerId"] = gameModel.gameBoard.Turn;
-
-                    /*if(result)
-                    {
-                        Player winner;
-                        if (gameModel.gameBoard.IsGameEnd(out winner))
-                        {
-                            
-                        }
-                    }*/
+                    ViewBag.Result = result;
                 }
                 catch (Exception ex)
                 {
                     errors.Add(ex.Message);
+
+                    if (json)
+                    {
+                        InsertErrors();
+                    }
                 }
 
-                return RedirectToAction("Game", "Home");
+                if (json)
+                {
+                    Response.ContentType = "application/json";
+                    return View(gameModel);
+                }
+                else {
+                    return RedirectToAction("Game", "Home");
+                }
             }
 
-            return RedirectToAction("Index", "Home");
+            if (json)
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return null;
+            }
+            else {
+                return RedirectToAction("Index", "Home");
+            }
         }
 
         /// <summary>
-        /// Action for /Home/gameover.cshtml
+        /// Action for /Home/gameend.cshtml
         /// </summary>
         /// <returns>View</returns>
-        public ActionResult GameOver()
+        public ActionResult GameEnd()
         {
             GameModel gameModel = GetSessionGame();
 
             if (gameModel != null)
             {
                 Player winner = new Player();
-                if (gameModel.gameBoard.IsGameEnd(out winner))
+                if (gameModel.Game.IsGameEnd(out winner))
                 {
                     ViewBag.Winner = winner;
                     return View(gameModel);

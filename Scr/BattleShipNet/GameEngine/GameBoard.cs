@@ -18,8 +18,6 @@ namespace GameEngine
         /// </summary>
         public GameBoard()
         {
-            PrivateGame = false;
-
             Players = new Player[2] {
                 new Player(),
                 new Player()

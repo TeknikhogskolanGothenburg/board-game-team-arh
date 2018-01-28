@@ -38,11 +38,8 @@ namespace GameEngine
             Boats = new Boat[7] {
                 new Boat(BoatType.Battleship),
                 new Boat(BoatType.Cruiser),
-                //new Boat(BoatType.Cruiser),
                 new Boat(BoatType.Destroyer),
                 new Boat(BoatType.Destroyer),
-                //new Boat(BoatType.Destroyer),
-                //new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine)
