@@ -34,6 +34,7 @@ namespace GameEngine
         public Player()
         {
             AlreadyHitPositions = new List<Position>();
+            Name = null;
 
             Boats = new Boat[7] {
                 new Boat(BoatType.Battleship),

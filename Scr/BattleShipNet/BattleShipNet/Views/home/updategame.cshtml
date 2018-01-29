@@ -1,6 +1,6 @@
 ﻿@model BattleShipNet.Models.GameModel
 @using GameEngine
-@using BattleShipNet.Helpers
+@using System.Web.Script.Serialization;
 
 @functions {
     public List<object> makeBoard(int playerId)
@@ -40,20 +40,19 @@
 @{
     Layout = null;
 
-    Dictionary<string, object> json = new Dictionary<string, object>();
+    Dictionary<string, object> toJson = new Dictionary<string, object>();
     List<object> playerboards = new List<object>();
     Player winner;
 
-    json.Add("turn", Model.Game.Turn);
+    toJson.Add("turn", Model.Game.Turn);
 
-    json.Add("gameend", Model.Game.IsGameEnd(out winner));
+    toJson.Add("gameend", Model.Game.IsGameEnd(out winner));
 
     playerboards.Add(makeBoard(0));
     playerboards.Add(makeBoard(1));
 
-    json.Add("boards", playerboards);
+    toJson.Add("boards", playerboards);
+    JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
 }
 
-{
-    @Html.Raw(JsonHelper.Render(json))
-}
+@Html.Raw(jsonSerializer.Serialize(toJson))

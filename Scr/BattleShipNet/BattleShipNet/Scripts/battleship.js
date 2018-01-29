@@ -28,7 +28,7 @@
 
                         // Set class for hit on square, if we got any response about it
                         if (data.result != undefined) {
-                            if (data.result == "True") {
+                            if (data.result) {
                                 square.addClass("boatHit");
                             }
                             else {
@@ -38,7 +38,7 @@
 
                         // If got any errors show them
                         if (data.Errors != undefined) {
-                            InsertAlert(data.Errors);
+                            InsertAlert(data.Errors, "danger");
                         }
 
                     }, "json") // Ask for JSON response
@@ -49,19 +49,19 @@
                 }
                 // If position is already hit, show error about it
                 else {
-                    InsertAlert(["Position is already hit!"]);
+                    InsertAlert(["Position is already hit!"], "danger");
                 }
             }
             // If it is not our turn, show error about it
             else {
-                InsertAlert(["Not your turn!"]);
+                InsertAlert(["Not your turn!"], "danger");
             }
         }
     });
 
     // Update game by GET Ajax-call (javascript pageload in background)
     function UpdateGame() {
-        $.get("/Home/UpdateGame", function (data) {
+        $.get("UpdateGame", function (data) {
             // Check and takecare turn changes and if game is over redirect to GameEnd page
             CheckGameMeta(data);
 
@@ -80,8 +80,8 @@
     // Check and takecare of turn changes and redirect if game is ended
     function CheckGameMeta(data) {
         // If game is ended, redirect to GameEnd view
-        if (data.gameend != undefined && data.gameend == "True") {
-            window.location.href = "/GameEnd";
+        if (data.gameend != undefined && data.gameend) {
+            window.location.href = "GameEnd";
         }
 
         // Check who turn it's, and set that with data-attributes
@@ -124,10 +124,10 @@
                 /// Check if square is register hit
                 if (!square.hasClass("hit") && !square.hasClass("boatHit")) {
                     // Check if any hit has been made since last update, if it has set class to html-element
-                    if (updateSquare.boathit == "True") {
+                    if (updateSquare.boathit) {
                         square.addClass("boatHit");
                     }
-                    else if(updateSquare.hit == "True") {
+                    else if(updateSquare.hit) {
                         square.addClass("hit");
                     }
                 }
@@ -135,16 +135,18 @@
         });
     }
 
-    // Insert error alert message, if player made something wrong
-    function InsertAlert(messages) {
+
+
+    // Insert alert message, if player made something wrong
+    function InsertAlert(messages, messageType) {
         var alertDiv;
-        // Check if got any #alert-danger element since before, otherwish make one 
-        if ($("#alert-danger").length == 0) {
-            alertDiv = $("<div>").addClass("alert alert-danger").attr("id", "alert-danger").attr("role", "alert");
+        // Check if got any #alert-<messageType> element since before, otherwish make one 
+        if ($("#alert-" + messageType).length == 0) {
+            alertDiv = $("<div>").addClass("alert alert-" + messageType).attr("id", "alert-" + messageType).attr("role", "alert");
             $(alertDiv).insertAfter("#instructionsArea");
         }
         else {
-            alertDiv = $(document).children("#alert-danger");
+            alertDiv = $("#alert-" + messageType);
         }
         
         alertDiv.html(""); // Empty element
@@ -153,7 +155,7 @@
         var ul = $("<ul>");
         alertDiv.append(ul);
 
-        // Loop-through error message, and add them to <li> elements, which we add to <ul> element
+        // Loop-through messages, and add them to <li> elements, which we add to <ul> element
         for (var i = 0; i < messages.length; i++) {
             var li = $("<li>").html(messages[i]);
             ul.append(li);
