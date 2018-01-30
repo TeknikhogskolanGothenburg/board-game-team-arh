@@ -127,28 +127,28 @@ namespace BattleShipNet.Controllers
         }
 
 
-        public ActionResult JoinGame(string name = "", string gameKey = "")
-        {
+        //public ActionResult JoinGame(string name = "", string gameKey = "")
+        //{
 
 
-            if (name != null && name.Length >= 2 && gameKey !=null)
-            {
-                GameBoard gameBoard = new GameBoard();
-                games.Add(gameBoard);
+        //    if (name != null && name.Length >= 2 && gameKey !=null)
+        //    {
+        //        GameBoard gameBoard = new GameBoard();
+        //        games.Add(gameBoard);
                 
-                gameBoard.Players[0].Name = name;
-                Session["GameKey"] = gameBoard.GameKey;
-                Session["PlayerId"] = 0;
+        //        gameBoard.Players[0].Name = name;
+        //        Session["GameKey"] = gameBoard.GameKey;
+        //        Session["PlayerId"] = 0;
 
-                GameModel gameModel = GetSessionGame();
+        //        GameModel gameModel = GetSessionGame();
 
 
-                return RedirectToAction("JoinSpecificGame", "Home");
-            }
+        //        return RedirectToAction("JoinSpecificGame", "Home");
+        //    }
 
-            errors.Add("Your name is too short and it should be mininum 2 characters.");
-            return RedirectToAction("StartGame", "Home");
-        }
+        //    errors.Add("Your name is too short and it should be mininum 2 characters.");
+        //    return RedirectToAction("StartGame", "Home");
+        //}
 
         public ActionResult JoinSpecificGame(string name, string gameKey)
         {
