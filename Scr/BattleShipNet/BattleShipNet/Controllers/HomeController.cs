@@ -51,9 +51,31 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult StartGame(string toDo, string gameKey = null)
         {
+            InsertErrors();
             ViewBag.ToDo = toDo;
             ViewBag.GameKey = gameKey;
-            return View(games);
+            return View();
+        }
+
+        public ActionResult Waiting(string email = null)
+        {
+            GameModel gameModel = GetSessionGame();
+            if(gameModel != null)
+            {
+                if (string.IsNullOrEmpty(gameModel.EnemyPlayer.Name))
+                {
+                    return View(gameModel);
+                }
+                return RedirectToAction("Game", "Home");
+            }
+
+            if (!string.IsNullOrEmpty(email))
+            {
+                //send email using sendgrid
+                //blalba.Execute();
+            }
+            
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>
@@ -82,6 +104,73 @@ namespace BattleShipNet.Controllers
 
             return RedirectToAction("Index", "Home");
         }
+
+        public ActionResult StartNewGame(string name, string privateGame = "")
+        {
+            if(name.Length >= 2)
+            {
+                GameBoard gameBoard = new GameBoard();
+                games.Add(gameBoard);
+                gameBoard.PrivateGame = (privateGame == "true") ? true : false;
+                gameBoard.Players[0].Name = name;
+                Session["GameKey"] = gameBoard.GameKey;
+                Session["PlayerId"] = 0;
+
+                GameModel gameModel = GetSessionGame();
+
+
+                return RedirectToAction("Waiting", "Home");
+            }
+
+            errors.Add("Your name is too short and it should be mininum 2 characters.");
+            return RedirectToAction("StartGame", "Home");
+        }
+
+
+        public ActionResult JoinGame(string name = "", string gameKey = "")
+        {
+
+
+            if (name != null && name.Length >= 2 && gameKey !=null)
+            {
+                GameBoard gameBoard = new GameBoard();
+                games.Add(gameBoard);
+                
+                gameBoard.Players[0].Name = name;
+                Session["GameKey"] = gameBoard.GameKey;
+                Session["PlayerId"] = 0;
+
+                GameModel gameModel = GetSessionGame();
+
+
+                return RedirectToAction("JoinSpecificGame", "Home");
+            }
+
+            errors.Add("Your name is too short and it should be mininum 2 characters.");
+            return RedirectToAction("StartGame", "Home");
+        }
+
+        public ActionResult JoinSpecificGame(string name, string gameKey)
+        {
+            if (name != null && name.Length>=2 && gameKey.Length ==6)
+            {
+                 
+                if (games.DoesItExist(gameKey))
+                {
+                    GameModel gameModel = new GameModel(games.Get(gameKey));
+
+                    gameModel.Game.Players[1].Name = name;
+                    Session["GameKey"] = gameKey;
+                    Session["PlayerId"] = 0;
+
+                    return View(gameModel);
+                }
+            }
+               
+            errors.Add("GameKey must include at least 6 characters");
+            return RedirectToAction("StartGame", "Home", new {toDo = "join", gamekey = gameKey});
+        }
+
 
         /// <summary>
         /// Action for /Home/updategame.cshtml

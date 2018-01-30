@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "Waiting";
+}
+
+<h2>Waiting For Your Opponent</h2>
+
+<form >
+    <ProgressTemplate>
+        <div id="Waiting">
+            <img alt="indicator" src="~/Content/Images/tenor.gif" />
+        </div>
+        <label>
+            <b>Game url to join:</b><br />
+        </label>
+        <div class="display-field">
+            <strong><u>@Url.Action("StartGame", "Home", new { todo = "join", gamekey = Session["GameKey"] }, Request.Url.Scheme)</u></strong>
+        </div>
+        <label>
+            Sending an email to friend with game url<br />
+        </label><br />
+        <label>
+            Email
+        </label>
+        @Html.TextBox("Email")
+        <input type="submit" name="ToSend" value="Send" /><br />
+    </ProgressTemplate>
+</form>

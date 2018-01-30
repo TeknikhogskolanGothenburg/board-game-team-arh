@@ -1,4 +1,5 @@
 ﻿@model GameEngine.GameBoards
+@using BattleShipNet.Helpers;
 
 @{
     ViewBag.Title = "Start Game";
@@ -6,29 +7,42 @@
 
 <h2>Start Game</h2>
 
-<form>
-    Name:<br>
-    <input type="text" name="name" /><br />
-    @if (ViewBag.ToDo == "Join specific game")
-    {
+@MessageHandler.Alert("danger", (List<string>)ViewBag.Errors)
+
+@if (ViewBag.ToDo == "join" || ViewBag.ToDo == "Join specific game" || ViewBag.ToDo == "Join open game")
+{
+    <form action="@Url.Action("JoinSpecificGame", "Home")" method="post">
+        Name:<br>
+        <input type="text" name="name" /><br />
+        @if (ViewBag.ToDo == "join" || ViewBag.ToDo == "Join specific game")
+        {
+            <label>
+                Gamekey:<br />
+                <input type="text" name="gameKey" value="@ViewBag.GameKey" />
+            </label>
+        }
+        else if (ViewBag.ToDo == "Join open game")
+        {
+            <label>
+                Select game to join:<br />
+                @Html.DropDownList("GameKey", new SelectList(Model.OpenGames, "GameKey", "Players[0].Name", null))<br />
+            </label>
+        }
+        <input type="submit" value="Join game" />
+    </form>
+}
+else
+{
+    <form action="@Url.Action("StartNewGame", "Home")" method="post">
         <label>
-            Gamekey:<br />
-            <input type="text" name="gameKey" value="@ViewBag.GameKey" />
-        </label>
-    }
-    else if (ViewBag.ToDo == "Join open game")
-    {
+            Name:<br>
+            <input type="text" name="name" />
+        </label><br />
+
         <label>
-            Select game to join:<br />
-            @Html.DropDownList("GameKey", new SelectList(Model.OpenGames, "GameKey", "Players[0].Name", null))<br />
+            <input type="checkbox" name="privateGame" value="true" /> Private game
         </label>
-    }
-    else
-    {
-        <label>
-            <input type="checkbox" name="privateGame" /> Private game
-        </label>
-    }
-    <br /><br />
-    <input type="submit" value="Start" /><br />
-</form>
+        <br /><br />
+        <input type="submit" value="Start new game" />
+    </form>
+}

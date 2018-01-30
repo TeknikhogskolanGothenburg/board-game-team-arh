@@ -16,7 +16,7 @@ namespace BattleShipNet.Helpers
         /// <returns>Html to print (HtmlString)</returns>
         public static HtmlString Alert(string type, List<string> messages)
         {
-            if (messages.Count > 0)
+            if (messages != null && messages.Count > 0)
             {
                 TagBuilder div = new TagBuilder("div");
                 div.AddCssClass("alert alert-" + type);

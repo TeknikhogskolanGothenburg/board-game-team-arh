@@ -176,7 +176,7 @@ namespace GameEngine
         /// </summary>
         /// <param name="positions">Positions to check (Position[])</param>
         /// <returns>Validate result (bool)</returns>
-        private bool IsAnyBoatHere(Position[] positions)
+        public bool IsAnyBoatHere(Position[] positions)
         {
             //Check if specified squad are occupied
             foreach (Boat boat in Boats)
