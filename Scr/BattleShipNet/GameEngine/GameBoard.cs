@@ -12,17 +12,8 @@ namespace GameEngine
 
         public Player[] Players { get; }
         public string GameKey { get; set; }
-        public bool PrivateGame { get; set; }
+        public bool Private { get; set; }
         public int Turn { get; private set; }
-
-        // Properties for check if both player has seen end screen
-        public bool BothPlayerHasSeenEndScreen
-        {
-            get
-            {
-                return (Players[0].HaveSeenEndScreen && Players[1].HaveSeenEndScreen);
-            }
-        }
 
         /// <summary>
         /// Properties for lastUpdate - get & set
@@ -50,6 +41,17 @@ namespace GameEngine
             get
             {
                 return (!string.IsNullOrEmpty(Players[1].Name));
+            }
+        }
+
+        /// <summary>
+        /// Properties for check if both player has seen end screen
+        /// </summary>
+        public bool BothPlayerHasSeenEndScreen
+        {
+            get
+            {
+                return (Players[0].HaveSeenEndScreen && Players[1].HaveSeenEndScreen);
             }
         }
 

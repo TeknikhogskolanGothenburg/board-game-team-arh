@@ -16,7 +16,7 @@
         <h3>Waiting on opponent</h3>
         <div id="loaderImage"></div>
         Game url to join:<br />
-        <strong><u>@Url.Action("StartGame", "Home", new { todo = "join", gamekey = Session["gamekey"] }, Request.Url.Scheme)</u></strong>
+        <strong><u>@Url.Action("JoinGame", "Home", new { gamekey = Session["gamekey"] }, Request.Url.Scheme)</u></strong>
     </div>
 </div>
 

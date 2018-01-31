@@ -15,7 +15,7 @@ namespace BattleShipNet.Controllers
         private static Dictionary<string, List<string>> messages;
 
         /// <summary>
-        /// Deafult constructor
+        /// Default constructor
         /// </summary>
         public HomeController()
         {
@@ -37,14 +37,30 @@ namespace BattleShipNet.Controllers
         }
 
         /// <summary>
-        /// Action for /Home/startgame.cshtml
+        /// Action for /Home/newgame.cshtml
         /// </summary>
-        /// <param name="toDo">Join or new game (string)</param>
-        /// <param name="gameKey">Game key (string)</param>
+        /// <param name="name">Post name (string)</param>
+        /// <param name="privateGame">Post private game (string)</param>
         /// <returns>View</returns>
-        public ActionResult StartGame(string toDo, string gameKey = null)
+        public ActionResult NewGame(string name = "", string privateGame = "")
         {
             InsertMessages();
+            ViewBag.Name = name;
+            ViewBag.Private = (privateGame == "true") ? true : false;
+            return View(games);
+        }
+
+        /// <summary>
+        /// Action for /Home/joingame.cshtml
+        /// </summary>
+        /// <param name="toDo">Join or new game (string)</param>
+        /// <param name="name">Post name (string)</param>
+        /// <param name="gameKey">Game key (string)</param>
+        /// <returns>View</returns>
+        public ActionResult JoinGame(string toDo = "join", string name = "", string gameKey = null)
+        {
+            InsertMessages();
+            ViewBag.Name = name;
             ViewBag.ToDo = toDo;
             ViewBag.GameKey = gameKey;
             return View(games);
@@ -62,7 +78,7 @@ namespace BattleShipNet.Controllers
             {
                 GameBoard gameBoard = new GameBoard();
                 games.Add(gameBoard);
-                gameBoard.PrivateGame = (privateGame == "true") ? true : false;
+                gameBoard.Private = (privateGame == "true") ? true : false;
                 gameBoard.Players[0].Name = name;
                 Session["GameKey"] = gameBoard.GameKey;
                 Session["PlayerId"] = 0;
@@ -71,7 +87,7 @@ namespace BattleShipNet.Controllers
             }
 
             AddMessage("danger", "Your name is too short and it should be mininum 2 characters.");
-            return RedirectToAction("StartGame", "Home");
+            return RedirectToAction("NewGame", "Home", new { name = name, privategame = privateGame });
         }
 
         /// <summary>
@@ -80,7 +96,7 @@ namespace BattleShipNet.Controllers
         /// <param name="name">Player name (string)</param>
         /// <param name="gameKey">Game key to gameboard (string)</param>
         /// <returns>Redirect</returns>
-        public ActionResult JoinGame(string name = "", string gameKey = "")
+        public ActionResult StartJoinGame(string name = "", string gameKey = "")
         {
             bool validate = true;
 
@@ -122,7 +138,7 @@ namespace BattleShipNet.Controllers
                 }
             }
             
-            return RedirectToAction("StartGame", "Home", new { todo = "join", gamekey = gameKey });
+            return RedirectToAction("JoinGame", "Home", new { todo = "join", name = name, gamekey = gameKey });
         }
 
         /// <summary>
@@ -167,7 +183,7 @@ namespace BattleShipNet.Controllers
                     return RedirectToAction("Game", "Home");
                 }
 
-                string url = Url.Action("StartGame", "Home", new { todo = "join", gamekey = Session["gamekey"] }, Request.Url.Scheme);
+                string url = Url.Action("JoinGame", "Home", new { gamekey = Session["gamekey"] }, Request.Url.Scheme);
 
                 try
                 {

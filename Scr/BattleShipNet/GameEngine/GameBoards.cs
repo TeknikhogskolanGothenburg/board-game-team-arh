@@ -18,7 +18,7 @@ namespace GameEngine
         {
             get
             {
-                return Games.FindAll(game => !game.PrivateGame && !game.Active);
+                return Games.FindAll(game => !game.Private && !game.Active);
             }
         }
 
