@@ -10,13 +10,22 @@ namespace GameEngine
     {
         public Position[] Positions { get; private set; }
         public BoatType Type { get; }
-        public int Size {
-            get {
+        public List<Position> Hits { get; }
+
+        /// <summary>
+        /// Properties for BoatType's size - get
+        /// </summary>
+        public int Size
+        {
+            get
+            {
                 return (int)Type;
             }
         }
-        public List<Position> Hits { get; }
 
+        /// <summary>
+        /// Properties for check if boat it's sink - get
+        /// </summary>
         public bool Sink
         {
             get

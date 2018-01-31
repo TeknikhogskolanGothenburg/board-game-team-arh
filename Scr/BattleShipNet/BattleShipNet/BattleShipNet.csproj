@@ -137,7 +137,7 @@
     <Content Include="Views\Home\shoot.cshtml" />
     <Content Include="Views\Home\updategame.cshtml" />
     <Content Include="Views\Home\waiting.cshtml" />
-    <Content Include="Views\Home\gamestat.cshtml" />
+    <Content Include="Views\Home\gametestinfo.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

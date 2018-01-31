@@ -9,22 +9,17 @@ namespace GameEngine
     public class Player
     {
         public string Name { get; set; }
-        public Boat[] Boats { get; }
+        public List<Boat> Boats { get; }
         public List<Position> AlreadyHitPositions { get; private set; }
 
+        /// <summary>
+        /// Properties for return if player has lost game - get
+        /// </summary>
         public bool HasPlayerLost
         {
             get
             {
-                foreach (var boat in Boats)
-                {
-                    if (!boat.Sink)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return (Boats.Find(boat => boat.Sink == false) == null);
             }
         }
 
@@ -36,7 +31,7 @@ namespace GameEngine
             AlreadyHitPositions = new List<Position>();
             Name = null;
 
-            Boats = new Boat[7] {
+            Boats = new List<Boat> {
                 new Boat(BoatType.Battleship),
                 new Boat(BoatType.Cruiser),
                 new Boat(BoatType.Destroyer),

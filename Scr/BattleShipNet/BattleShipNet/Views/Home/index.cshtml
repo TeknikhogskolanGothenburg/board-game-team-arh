@@ -1,7 +1,10 @@
-﻿
+﻿@using BattleShipNet.Helpers
+
 @{
     ViewBag.Title = "index";
 }
+
+@MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
 
 <div class="game-bg index-bg">
     <form action="/Home/StartGame">

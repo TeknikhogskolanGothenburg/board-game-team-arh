@@ -1,6 +1,4 @@
-﻿@model BattleShipNet.Models.GameModel
-
-@{
+﻿@{
     ViewBag.Title = "Game End!";
 }
 
@@ -10,7 +8,7 @@
     string header;
     string message;
 
-    if (ViewBag.Winner == Model.YourPlayer)
+    if (ViewBag.Winner == ViewBag.Player)
     {
         bgClass = "gamewon";
         alertClass = "success";

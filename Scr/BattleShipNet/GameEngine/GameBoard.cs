@@ -8,11 +8,41 @@ namespace GameEngine
 {
     public class GameBoard
     {
+        private DateTime lastUpdate;
+
         public Player[] Players { get; }
         public string GameKey { get; set; }
         public bool PrivateGame { get; set; }
         public int Turn { get; private set; }
-        public DateTime LastUpdate { get; private set; }
+
+        /// <summary>
+        /// Properties for lastUpdate - get & set
+        /// </summary>
+        public DateTime LastUpdate
+        {
+            get {
+                return lastUpdate;
+            }
+            set
+            {
+                if(value != null)
+                {
+                    // Remove miliseconds, for easier to compare to string date
+                    lastUpdate = new DateTime(value.Year, value.Month, value.Day, value.Hour, value.Minute, value.Second);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Properties to check if game is active - get
+        /// </summary>
+        public bool Active
+        {
+            get
+            {
+                return (!string.IsNullOrEmpty(Players[1].Name));
+            }
+        }
 
         /// <summary>
         /// Default constructor
@@ -25,6 +55,7 @@ namespace GameEngine
             };
 
             Turn = 1;
+            LastUpdate = DateTime.Now;
         }
 
         /// <summary>

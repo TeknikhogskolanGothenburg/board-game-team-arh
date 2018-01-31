@@ -32,6 +32,7 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult Index()
         {
+            InsertMessages();
             return View();
         }
 
@@ -39,6 +40,7 @@ namespace BattleShipNet.Controllers
         /// Action for /Home/startgame.cshtml
         /// </summary>
         /// <param name="toDo">Join or new game (string)</param>
+        /// <param name="gameKey">Game key (string)</param>
         /// <returns>View</returns>
         public ActionResult StartGame(string toDo, string gameKey = null)
         {
@@ -48,7 +50,13 @@ namespace BattleShipNet.Controllers
             return View(games);
         }
 
-        public ActionResult StartNewGame(string name, string privateGame = "")
+        /// <summary>
+        /// Action for take post to start a new gameboard
+        /// </summary>
+        /// <param name="name">Player name (string)</param>
+        /// <param name="privateGame">If game are not allowed to join without game key (string)</param>
+        /// <returns>Redirect</returns>
+        public ActionResult StartNewGame(string name = "", string privateGame = "")
         {
             if ((name != null) && name.Length >= 2)
             {
@@ -59,9 +67,6 @@ namespace BattleShipNet.Controllers
                 Session["GameKey"] = gameBoard.GameKey;
                 Session["PlayerId"] = 0;
 
-                GameModel gameModel = GetSessionGame();
-
-
                 return RedirectToAction("Waiting", "Home");
             }
 
@@ -69,6 +74,12 @@ namespace BattleShipNet.Controllers
             return RedirectToAction("StartGame", "Home");
         }
 
+        /// <summary>
+        /// Action for take post to join existing gameboard
+        /// </summary>
+        /// <param name="name">Player name (string)</param>
+        /// <param name="gameKey">Game key to gameboard (string)</param>
+        /// <returns>Redirect</returns>
         public ActionResult JoinGame(string name = "", string gameKey = "")
         {
             bool validate = true;
@@ -89,13 +100,25 @@ namespace BattleShipNet.Controllers
             {
                 if (games.DoesItExist(gameKey))
                 {
-                    GameModel gameModel = new GameModel(games.Get(gameKey));
+                    GameBoard game = games.Get(gameKey);
 
-                    gameModel.Game.Players[1].Name = name;
-                    Session["GameKey"] = gameKey;
-                    Session["PlayerId"] = 1;
+                    if (!game.Active)
+                    {
+                        game.Players[1].Name = name;
+                        game.LastUpdate = DateTime.Now;
+                        Session["GameKey"] = gameKey;
+                        Session["PlayerId"] = 1;
 
-                    return RedirectToAction("Game", "Home");
+                        return RedirectToAction("Game", "Home");
+                    }
+                    else
+                    {
+                        AddMessage("danger", "Game are already active.");
+                    }
+                }
+                else if ((gameKey == null) || gameKey.Length != 6)
+                {
+                    AddMessage("danger", "Game with this game key doesn't exist.");
                 }
             }
             
@@ -108,11 +131,12 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult Waiting()
         {
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
-            if (gameModel != null)
+            if(gameModel != null)
             {
-                if (!string.IsNullOrEmpty(gameModel.EnemyPlayer.Name))
+                if (gameModel.Game.Active)
                 {
                     return RedirectToAction("Game", "Home");
                 }
@@ -128,13 +152,16 @@ namespace BattleShipNet.Controllers
         /// <summary>
         /// Action for EmailFriend
         /// </summary>
+        /// <param name="email">Email to send mail to (string)</param>
+        /// <returns>Redirect</returns>
         /*public ActionResult EmailFriend(string email)
         {
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
-            if (gameModel != null)
+            if(gameModel)
             {
-                if (!string.IsNullOrEmpty(gameModel.EnemyPlayer.Name))
+                if (gameModel.Game.Active)
                 {
                     AddMessage("danger", "Email got never send, for a player had already join this game!");
                     return RedirectToAction("Game", "Home");
@@ -165,11 +192,12 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult Game()
         {
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
-            if (gameModel != null)
+            if(gameModel != null)
             {
-                if (string.IsNullOrEmpty(gameModel.EnemyPlayer.Name))
+                if (!gameModel.Game.Active)
                 {
                     AddMessage("danger", "Game has not started yet, still waiting on opponent player!");
                     return RedirectToAction("Waiting", "Home");
@@ -193,14 +221,27 @@ namespace BattleShipNet.Controllers
         /// Action for view /Home/updategame.cshtml
         /// </summary>
         /// <returns>View</returns>
-        public ActionResult UpdateGame()
+        public ActionResult UpdateGame(string lastupdate)
         {
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
             if (gameModel != null)
             {
-                Response.ContentType = "application/json";
-                return View(gameModel);
+                DateTime lastUpdate;
+
+                DateTime.TryParse(lastupdate, out lastUpdate);
+
+                if ((lastUpdate == null) || gameModel.Game.LastUpdate > lastUpdate)
+                {
+                    Response.ContentType = "application/json";
+                    return View(gameModel);
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotModified;
+                    return null;
+                }
             }
 
             Response.StatusCode = (int)HttpStatusCode.Unauthorized;
@@ -210,10 +251,15 @@ namespace BattleShipNet.Controllers
         /// <summary>
         /// Action for view /Home/shoot.cshtml
         /// </summary>
+        /// <param name="x">Position x to shoot on (int)</param>
+        /// <param name="y">Position y to shoot on (int)</param>
+        /// <returns>View/Redirect</returns>
         public ActionResult Shoot(string x, string y)
         {
-            GameModel gameModel = GetSessionGame();
+            // If Request ask for json
             bool json = Request.Headers.Get("Accept").StartsWith("application/json");
+            // Get GameModel for session GameBoard
+            GameModel gameModel = GetSessionGame();
 
             if (gameModel != null)
             {
@@ -243,22 +289,22 @@ namespace BattleShipNet.Controllers
                 }
             }
 
-            if (json)
+            if(json)
             {
                 Response.StatusCode = (int)HttpStatusCode.Unauthorized;
                 return null;
             }
-            else {
-                return RedirectToAction("Index", "Home");
-            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         /// <summary>
-        /// Action for view /Home/gamestat.cshtml (Only to test game code)
+        /// Action for view /Home/gametestinfo.cshtml (Only to test game code)
         /// </summary>
         /// <returns>View</returns>
-        //public ActionResult GameStat()
+        //public ActionResult GameTestInfo()
         //{
+        //    // Get GameModel for session GameBoard
         //    GameModel gameModel = GetSessionGame();
 
         //    if (gameModel != null)
@@ -275,6 +321,7 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult GameEnd()
         {
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
             if (gameModel != null)
@@ -283,7 +330,9 @@ namespace BattleShipNet.Controllers
                 if (gameModel.Game.IsGameEnd(out winner))
                 {
                     ViewBag.Winner = winner;
-                    return View(gameModel);
+                    ViewBag.Player = gameModel.YourPlayer;
+                    RemoveSessionGame();
+                    return View();
                 }
                 else
                 {
@@ -295,7 +344,7 @@ namespace BattleShipNet.Controllers
         }
     
         /// <summary>
-        /// Takes care get GameBoard from session GameKey
+        /// Takes care to get GameBoard from session GameKey
         /// </summary>
         /// <returns>GameModel object with GameBoard</returns>
         private GameModel GetSessionGame()
@@ -315,7 +364,24 @@ namespace BattleShipNet.Controllers
                 }
             }
 
+            AddMessage("danger", "Fail to find a active game with your session.");
+
             return null;
+        }
+
+        /// <summary>
+        /// Remove GameBoard with session GameKey
+        /// </summary>
+        private void RemoveSessionGame()
+        {
+            if (Session["GameKey"] != null)
+            {
+                string gameKey = Session["GameKey"].ToString();
+
+                games.Remove(gameKey);
+                Session["GameKey"] = null;
+                Session["PlayerID"] = null;
+            }
         }
 
         /// <summary>

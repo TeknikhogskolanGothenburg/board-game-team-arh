@@ -83,6 +83,7 @@
     color: red;
 }
 
+/* Set link to not clickable */
 .playerboard[data-turn='true'] .squares a {
     pointer-events: none;
     cursor: default;

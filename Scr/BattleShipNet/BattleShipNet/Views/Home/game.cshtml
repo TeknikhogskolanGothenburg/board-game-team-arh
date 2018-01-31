@@ -63,7 +63,7 @@
 
 @MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
 
-<div id="playerboards">
+<div id="playerboards" data-lastupdate="@DateTime.Now">
     @makeBoard(Model.YourPlayerId)
     @makeBoard(Model.EnemyPlayerId)
 </div>

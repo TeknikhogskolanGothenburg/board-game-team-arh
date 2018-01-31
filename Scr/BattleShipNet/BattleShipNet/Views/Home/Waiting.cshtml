@@ -11,7 +11,7 @@
 
 @MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
 
-<div class="game-bg waiting-bg">
+<div class="game-bg waiting-bg" data-lastupdate="@DateTime.Now">
     <div class="alert alert-success">
         <h3>Waiting on opponent</h3>
         <div id="loaderImage"></div>

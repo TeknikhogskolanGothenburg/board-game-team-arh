@@ -1,8 +1,8 @@
 ﻿$(document).ready(function () {
     var base_url = "../";
-    var path = window.location.pathname.toLowerCase();
-    var pathArr = path.replace(/^\//, "").split("/");
-    var page = pathArr[pathArr.length - 1];
+    var path = window.location.pathname.toLowerCase(); // Get urn we are visiting
+    var pathArr = path.replace(/^\//, "").split("/");  // Split every path
+    var page = pathArr[pathArr.length - 1]; // Set page to last path part
     
     // Click trigger when a link is clicked
     $("a").click(function (event) {
@@ -66,7 +66,21 @@
 
     // Update game by GET Ajax-call (javascript pageload in background)
     function UpdateGame() {
-        $.get("UpdateGame", function (data) {
+        // Get lastUpdateElement
+        if (page == "waiting") {
+            var lastUpdateElement = $(".waiting-bg");
+        }
+        else {
+            var lastUpdateElement = $("#playerboards");
+        }
+        
+        // Get lastUpdate from data-attribute lastupdate
+        var lastUpdate = lastUpdateElement.attr("data-lastupdate");
+
+        $.post("UpdateGame", { lastupdate: lastUpdate }, function (data) {
+            // Set game last update, for later use
+            lastUpdateElement.attr("data-lastupdate", data.lastupdate);
+
             // Check if game is started
             if (data.gamestart) {
                 // If we are on waiting view redirect us to Game view
@@ -121,8 +135,8 @@
         if (statusCode == 401) {
             window.location.href = base_url;
         }
-        // Other redirect to defaultRedirect url
-        else {
+        // Others then 401 and 304 redirect to defaultRedirect url
+        else if (statusCode != 304) {
             window.location.href = defaultRedirect;
         }
     }
