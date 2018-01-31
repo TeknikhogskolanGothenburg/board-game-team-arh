@@ -170,37 +170,37 @@ namespace BattleShipNet.Controllers
         /// </summary>
         /// <param name="email">Email to send mail to (string)</param>
         /// <returns>Redirect</returns>
-        /*public ActionResult EmailFriend(string email)
-        {
-            // Get GameModel for session GameBoard
-            GameModel gameModel = GetSessionGame();
+        //public ActionResult EmailFriend(string email)
+        //{
+        //    // Get GameModel for session GameBoard
+        //    GameModel gameModel = GetSessionGame();
 
-            if(gameModel)
-            {
-                if (gameModel.Game.Active)
-                {
-                    AddMessage("danger", "Email got never send, for a player had already join this game!");
-                    return RedirectToAction("Game", "Home");
-                }
+        //    if(gameModel != null)
+        //    {
+        //        if (gameModel.Game.Active)
+        //        {
+        //            AddMessage("danger", "Email got never send, for a player had already join this game!");
+        //            return RedirectToAction("Game", "Home");
+        //        }
 
-                string url = Url.Action("JoinGame", "Home", new { gamekey = Session["gamekey"] }, Request.Url.Scheme);
+        //        string url = Url.Action("JoinGame", "Home", new { gamekey = Session["gamekey"] }, Request.Url.Scheme);
 
-                try
-                {
-                    MailModel.SendInviteEmail(email, gameModel.YourPlayer.Name, url);
+        //        try
+        //        {
+        //            MailModel.SendInviteEmail(email, gameModel.YourPlayer.Name, url);
 
-                    AddMessage("success", "A email with game url, was send to your friend!");
-                }
-                catch (Exception ex)
-                {
-                    AddMessage("danger", ex.Message);
-                }
+        //            AddMessage("success", "A email with game url, was send to your friend!");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AddMessage("danger", ex.Message);
+        //        }
 
-                return RedirectToAction("Waiting", "Home");
-            }
+        //        return RedirectToAction("Waiting", "Home");
+        //    }
 
-            return RedirectToAction("Index", "Home");
-        }*/
+        //    return RedirectToAction("Index", "Home");
+        //}
 
         /// <summary>
         /// Action for view /Home/game.cshtml
