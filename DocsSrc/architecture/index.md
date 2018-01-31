@@ -43,3 +43,5 @@ HomeControllen har också fyra privata metoder för att underlätta saker som ä
 Utöver det finns en extra css för spelet (battleship.css) och javascript fil (battleship.js).
 Det sistnämnda har ett klickevent om man klickar på valfri ruta på motståndarens spelplan när det är ens tur, då anropar den Shoot action och hanterar svaret helt utan att ladda upp sidan.
 De finns även en funktion som laddas var femte sekund, vilket anropar UpdateGame action för att få speldatan och hanterar den sedan. Detta för slippa uppdatera hela sidan, samt göra de hela mera dynamiskt.
+
+Spelet finns uppladdat på: http://battleship.chibidesign.se
