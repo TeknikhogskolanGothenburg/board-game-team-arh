@@ -1,5 +1,8 @@
 ﻿$(document).ready(function () {
     var base_url = "../";
+    var path = window.location.pathname.toLowerCase();
+    var pathArr = path.replace(/^\//, "").split("/");
+    var page = pathArr[pathArr.length - 1];
     
     // Click trigger when a link is clicked
     $("a").click(function (event) {
@@ -37,8 +40,10 @@
                         }
 
                         // If got any errors show them
-                        if (data.Errors != undefined) {
-                            InsertAlert(data.Errors, "danger");
+                        if (data.Messages != undefined) {
+                            $.each(data.Messages, function (messageType, messages) {
+                                InsertAlert(messages, messageType);
+                            });
                         }
 
                     }, "json") // Ask for JSON response
@@ -62,11 +67,24 @@
     // Update game by GET Ajax-call (javascript pageload in background)
     function UpdateGame() {
         $.get("UpdateGame", function (data) {
-            // Check and takecare turn changes and if game is over redirect to GameEnd page
-            CheckGameMeta(data);
+            // Check if game is started
+            if (data.gamestart) {
+                // If we are on waiting view redirect us to Game view
+                if (page == "waiting") {
+                    window.location.href = "Game";
+                }
+                else {
+                    // Check and takecare turn changes and if game is over redirect to GameEnd page
+                    CheckGameMeta(data);
 
-            // Check and takecare of boards changes
-            UpdateBoards(data.boards);
+                    // Check and takecare of boards changes
+                    UpdateBoards(data.boards);
+                }
+            }
+            // If not redirect if we are on Game view
+            else if (page == "game") {
+                window.location.href = "Waiting";
+            }
         }, "json") // Request JSON-response
         .fail(function (xhr, statusText) {
             // If it fail, redirect by status code response
@@ -134,8 +152,6 @@
             });
         });
     }
-
-
 
     // Insert alert message, if player made something wrong
     function InsertAlert(messages, messageType) {

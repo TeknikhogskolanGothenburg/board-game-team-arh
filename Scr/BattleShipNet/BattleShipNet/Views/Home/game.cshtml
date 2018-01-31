@@ -61,7 +61,7 @@
 	<p id="instructions">Just a example text, until we know what to write here! Try to sink every battleship!</p>
 </div>
 
-@MessageHandler.Alert("danger", (List<string>)ViewBag.Errors)
+@MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
 
 <div id="playerboards">
     @makeBoard(Model.YourPlayerId)

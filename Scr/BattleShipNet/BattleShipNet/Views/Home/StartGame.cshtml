@@ -1,17 +1,16 @@
 ﻿@model GameEngine.GameBoards
 @using BattleShipNet.Helpers;
-
 @{
     ViewBag.Title = "Start Game";
 }
 
-<h2>Start Game</h2>
-
-@MessageHandler.Alert("danger", (List<string>)ViewBag.Errors)
-
 @if (ViewBag.ToDo == "join" || ViewBag.ToDo == "Join specific game" || ViewBag.ToDo == "Join open game")
 {
-    <form action="@Url.Action("JoinSpecificGame", "Home")" method="post">
+    <h2>Join game</h2>
+
+    @MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
+
+    <form action="@Url.Action("JoinGame", "Home")" method="post">
         Name:<br>
         <input type="text" name="name" /><br />
         @if (ViewBag.ToDo == "join" || ViewBag.ToDo == "Join specific game")
@@ -33,12 +32,15 @@
 }
 else
 {
+    <h2>Start new game</h2>
+
+    @MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
+
     <form action="@Url.Action("StartNewGame", "Home")" method="post">
         <label>
             Name:<br>
             <input type="text" name="name" />
         </label><br />
-
         <label>
             <input type="checkbox" name="privateGame" value="true" /> Private game
         </label>

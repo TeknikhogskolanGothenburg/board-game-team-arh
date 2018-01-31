@@ -29,7 +29,6 @@ namespace UnitTestProject1
             Assert.AreEqual(true, result);
         }
 
- 
         [TestMethod]
         public void IsABoatHit()
         {
@@ -45,7 +44,6 @@ namespace UnitTestProject1
 
             // Assert
             Assert.AreEqual(true, result);
-
         }
 
         [TestMethod]
@@ -107,7 +105,7 @@ namespace UnitTestProject1
         }
 
         [TestMethod]
-        public void IsAnyBoatHere1()
+        public void AreAnyBoatHere()
         {
             GameBoard gameBoard = new GameBoard();
             Player player = gameBoard.Players[0];
@@ -118,18 +116,14 @@ namespace UnitTestProject1
 
             boat1.SetPositions(position1);
 
-            bool result1 = player.IsAnyBoatHere(position1);
-
-            Position[] position2 = new Position[2] { new Position(2, 1), new Position(4, 1) };
-
-            boat1.SetPositions(position2);
-
-            bool result2 = player.IsAnyBoatHere(position2);
+            bool result1 = player.IsAnyBoatHere(new Position(1, 1));
+            bool result2 = player.IsAnyBoatHere(new Position(1, 2));
+            bool result3 = player.IsAnyBoatHere(new Position(1, 3));
 
             // Assert
             Assert.AreEqual(true, result1);
             Assert.AreEqual(true, result2);
+            Assert.AreEqual(true, result3);
         }
-
     }
 }

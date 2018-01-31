@@ -119,7 +119,7 @@ namespace BattleShipNet.Models
                 }
             }
 
-            throw new Exception("You need to hit one existing positions");
+            throw new Exception("You need to hit one existing position");
         }
     }
 }

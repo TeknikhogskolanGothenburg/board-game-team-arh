@@ -12,6 +12,7 @@ namespace GameEngine
         public string GameKey { get; set; }
         public bool PrivateGame { get; set; }
         public int Turn { get; private set; }
+        public DateTime LastUpdate { get; private set; }
 
         /// <summary>
         /// Default constructor
@@ -42,6 +43,8 @@ namespace GameEngine
                 // Check so Position is not already hit
                 if (!player.IsPositionAlreadyHit(position))
                 {
+                    LastUpdate = DateTime.Now;
+
                     // Check if a Boat was hit, if not change turn to enemy
                     if (!player.IsABoatHit(position))
                     {
@@ -74,6 +77,7 @@ namespace GameEngine
                 winner = Players[1];
                 return true;
             }
+
             if (Players[1].HasPlayerLost)
             {
                 winner = Players[0];

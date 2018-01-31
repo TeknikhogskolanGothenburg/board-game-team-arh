@@ -41,17 +41,27 @@
     Layout = null;
 
     Dictionary<string, object> toJson = new Dictionary<string, object>();
-    List<object> playerboards = new List<object>();
-    Player winner;
 
-    toJson.Add("turn", Model.Game.Turn);
+    if (string.IsNullOrEmpty(Model.EnemyPlayer.Name))
+    {
+        toJson.Add("gamestart", false);
+    }
+    else {
+        List<object> playerboards = new List<object>();
+        Player winner;
 
-    toJson.Add("gameend", Model.Game.IsGameEnd(out winner));
+        toJson.Add("gamestart", true);
 
-    playerboards.Add(makeBoard(0));
-    playerboards.Add(makeBoard(1));
+        toJson.Add("turn", Model.Game.Turn);
 
-    toJson.Add("boards", playerboards);
+        toJson.Add("gameend", Model.Game.IsGameEnd(out winner));
+
+        playerboards.Add(makeBoard(0));
+        playerboards.Add(makeBoard(1));
+
+        toJson.Add("boards", playerboards);
+    }
+
     JavaScriptSerializer jsonSerializer = new JavaScriptSerializer();
 }
 

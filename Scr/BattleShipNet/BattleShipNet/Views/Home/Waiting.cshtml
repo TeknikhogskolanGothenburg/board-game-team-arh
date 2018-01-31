@@ -1,27 +1,32 @@
-﻿@{
-    ViewBag.Title = "Waiting";
+﻿@using BattleShipNet.Helpers
+
+@{
+    ViewBag.Title = "Waiting on opponent";
 }
 
-<h2>Waiting For Your Opponent</h2>
+@section Scripts{ 
+    <script type="text/javascript" src="~/Scripts/canvas.js"></script>
+    <script type="text/javascript" src="~/Scripts/battleship.js"></script>
+}
 
-<form >
-    <ProgressTemplate>
-        <div id="Waiting">
-            <img alt="indicator" src="~/Content/Images/tenor.gif" />
-        </div>
-        <label>
-            <b>Game url to join:</b><br />
-        </label>
-        <div class="display-field">
-            <strong><u>@Url.Action("StartGame", "Home", new { todo = "join", gamekey = Session["GameKey"] }, Request.Url.Scheme)</u></strong>
-        </div>
-        <label>
-            Sending an email to friend with game url<br />
-        </label><br />
-        <label>
-            Email
-        </label>
-        @Html.TextBox("Email")
-        <input type="submit" name="ToSend" value="Send" /><br />
-    </ProgressTemplate>
+@MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
+
+<div class="game-bg waiting-bg">
+    <div class="alert alert-success">
+        <h3>Waiting on opponent</h3>
+        <div id="loaderImage"></div>
+        Game url to join:<br />
+        <strong><u>@Url.Action("StartGame", "Home", new { todo = "join", gamekey = Session["gamekey"] }, Request.Url.Scheme)</u></strong>
+    </div>
+</div>
+
+@{/*
+<form action="@Url.Action("EmailFriend", "Home")" method="post" class="waiting-form">
+    <h4>Send a email with game url to friend</h4>
+    <label>
+        Email: <input type="text" name="email" />
+    </label>
+
+    <input type="submit" value="Send" />
 </form>
+*/}
