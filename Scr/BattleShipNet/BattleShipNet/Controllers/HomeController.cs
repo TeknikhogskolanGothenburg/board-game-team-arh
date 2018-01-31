@@ -159,7 +159,6 @@ namespace BattleShipNet.Controllers
             return RedirectToAction("Index", "Home");
         }*/
 
-<<<<<<< HEAD
         /// <summary>
         /// Action for view /Home/game.cshtml
         /// </summary>
@@ -175,30 +174,6 @@ namespace BattleShipNet.Controllers
                     AddMessage("danger", "Game has not started yet, still waiting on opponent player!");
                     return RedirectToAction("Waiting", "Home");
                 }
-=======
-        //public ActionResult JoinGame(string name = "", string gameKey = "")
-        //{
-
-
-        //    if (name != null && name.Length >= 2 && gameKey !=null)
-        //    {
-        //        GameBoard gameBoard = new GameBoard();
-        //        games.Add(gameBoard);
-                
-        //        gameBoard.Players[0].Name = name;
-        //        Session["GameKey"] = gameBoard.GameKey;
-        //        Session["PlayerId"] = 0;
-
-        //        GameModel gameModel = GetSessionGame();
-
-
-        //        return RedirectToAction("JoinSpecificGame", "Home");
-        //    }
-
-        //    errors.Add("Your name is too short and it should be mininum 2 characters.");
-        //    return RedirectToAction("StartGame", "Home");
-        //}
->>>>>>> 2b0ec4c6c8db182130dbe1905f2e614a8d0b046c
 
                 Player winner;
                 if (gameModel.Game.IsGameEnd(out winner))
