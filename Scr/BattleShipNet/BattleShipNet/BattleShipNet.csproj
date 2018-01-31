@@ -93,12 +93,18 @@
     <Content Include="Content\Images\gameover-bg.png" />
     <Content Include="Content\Images\gamewon-bg.png" />
     <Content Include="Content\Images\index-bg.png" />
+    <Content Include="Content\Images\sprites.png" />
+    <Content Include="Content\Images\waiting-bg.png" />
     <Content Include="Content\Site.css" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
+    <Content Include="Scripts\battleship.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="Properties\PublishProfiles\test.pubxml" />
     <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\canvas.js" />
     <Content Include="Scripts\jquery-1.10.2.js" />
     <Content Include="Scripts\jquery-1.10.2.min.js" />
     <Content Include="Scripts\modernizr-2.6.2.js" />
@@ -111,6 +117,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\MessageHandler.cs" />
+    <Compile Include="Models\EmailModel.cs" />
     <Compile Include="Models\GameModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -124,9 +131,14 @@
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\index.cshtml" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
-    <Content Include="Views\Home\startgame.cshtml" />
+    <Content Include="Views\Home\newgame.cshtml" />
     <Content Include="Views\Home\game.cshtml" />
-    <Content Include="Views\Home\gameover.cshtml" />
+    <Content Include="Views\Home\gameend.cshtml" />
+    <Content Include="Views\Home\shoot.cshtml" />
+    <Content Include="Views\Home\updategame.cshtml" />
+    <Content Include="Views\Home\waiting.cshtml" />
+    <Content Include="Views\Home\gametestinfo.cshtml" />
+    <Content Include="Views\Home\joingame.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

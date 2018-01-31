@@ -1,7 +1,7 @@
 ﻿#instructionsArea {
     position: relative;
-    margin: 0 auto 2em auto;
-    width: 600px;
+    margin: 2em auto;
+    width: 800px;
 }
 
 #playerboards:after {
@@ -31,6 +31,18 @@
     margin-bottom: 1rem;
     display: block;
     text-align:center;
+}
+
+.playerboard[data-turn='true'] .playerName:before {
+    content: "\e184";
+    font-family: 'Glyphicons Halflings';
+    font-size: 23px;
+    margin-right: 5px;
+    color: black;
+}
+
+.playerboard[data-turn='true'] .playerName {
+    color: red;
 }
 
 .playerboard .topHeader {
@@ -69,4 +81,10 @@
 
 .square.boatHit:before {
     color: red;
+}
+
+/* Set link to not clickable */
+.playerboard[data-turn='true'] .squares a {
+    pointer-events: none;
+    cursor: default;
 }

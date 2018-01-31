@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Net;
 using GameEngine;
 using BattleShipNet.Models;
 
@@ -11,17 +12,17 @@ namespace BattleShipNet.Controllers
     public class HomeController : Controller
     {
         private static GameBoards games;
-        private static List<string> errors;
+        private static Dictionary<string, List<string>> messages;
 
         /// <summary>
-        /// Deafult constructor
+        /// Default constructor
         /// </summary>
         public HomeController()
         {
             if (games == null)
             {
                 games = new GameBoards();
-                errors = new List<string>();
+                messages = new Dictionary<string, List<string>>();
             }
         }
 
@@ -31,46 +32,132 @@ namespace BattleShipNet.Controllers
         /// <returns>View</returns>
         public ActionResult Index()
         {
-            // Test code
-            GameBoard gameBoard = new GameBoard();
-            games.Add(gameBoard);
-            gameBoard.Players[0].Name = "Hans";
-            gameBoard.Players[1].Name = "Greta";
-            Session["GameKey"] = gameBoard.GameKey;
-            Session["PlayerId"] = 1;
-            // Test code end
+            InsertMessages();
             return View();
         }
 
         /// <summary>
-        /// Action for /Home/startgame.cshtml
+        /// Action for /Home/newgame.cshtml
+        /// </summary>
+        /// <param name="name">Post name (string)</param>
+        /// <param name="privateGame">Post private game (string)</param>
+        /// <returns>View</returns>
+        public ActionResult NewGame(string name = "", string privateGame = "")
+        {
+            InsertMessages();
+            ViewBag.Name = name;
+            ViewBag.Private = (privateGame == "true") ? true : false;
+            return View(games);
+        }
+
+        /// <summary>
+        /// Action for /Home/joingame.cshtml
         /// </summary>
         /// <param name="toDo">Join or new game (string)</param>
+        /// <param name="name">Post name (string)</param>
+        /// <param name="gameKey">Game key (string)</param>
         /// <returns>View</returns>
-        public ActionResult StartGame(string toDo, string gameKey = null)
+        public ActionResult JoinGame(string toDo = "join", string name = "", string gameKey = null)
         {
+            InsertMessages();
+            ViewBag.Name = name;
             ViewBag.ToDo = toDo;
             ViewBag.GameKey = gameKey;
             return View(games);
         }
 
         /// <summary>
-        /// Action for /Home/game.cshtml
+        /// Action for take post to start a new gameboard
+        /// </summary>
+        /// <param name="name">Player name (string)</param>
+        /// <param name="privateGame">If game are not allowed to join without game key (string)</param>
+        /// <returns>Redirect</returns>
+        public ActionResult StartNewGame(string name = "", string privateGame = "")
+        {
+            if ((name != null) && name.Length >= 2)
+            {
+                GameBoard gameBoard = new GameBoard();
+                games.Add(gameBoard);
+                gameBoard.Private = (privateGame == "true") ? true : false;
+                gameBoard.Players[0].Name = name;
+                Session["GameKey"] = gameBoard.GameKey;
+                Session["PlayerId"] = 0;
+
+                return RedirectToAction("Waiting", "Home");
+            }
+
+            AddMessage("danger", "Your name is too short and it should be mininum 2 characters.");
+            return RedirectToAction("NewGame", "Home", new { name = name, privategame = privateGame });
+        }
+
+        /// <summary>
+        /// Action for take post to join existing gameboard
+        /// </summary>
+        /// <param name="name">Player name (string)</param>
+        /// <param name="gameKey">Game key to gameboard (string)</param>
+        /// <returns>Redirect</returns>
+        public ActionResult StartJoinGame(string name = "", string gameKey = "")
+        {
+            bool validate = true;
+
+            if ((name == null) || name.Length < 2)
+            {
+                AddMessage("danger", "Your name is too short and it should be mininum 2 characters.");
+                validate = false;
+            }
+
+            if((gameKey == null) || gameKey.Length != 6) 
+            {
+                AddMessage("danger", "Game key is invalid.");
+                validate = false;
+            }
+
+            if (validate)
+            {
+                if (games.DoesItExist(gameKey))
+                {
+                    GameBoard game = games.Get(gameKey);
+
+                    if (!game.Active)
+                    {
+                        game.Players[1].Name = name;
+                        game.LastUpdate = DateTime.Now;
+                        Session["GameKey"] = gameKey;
+                        Session["PlayerId"] = 1;
+
+                        return RedirectToAction("Game", "Home");
+                    }
+                    else
+                    {
+                        AddMessage("danger", "Game are already active.");
+                    }
+                }
+                else if ((gameKey == null) || gameKey.Length != 6)
+                {
+                    AddMessage("danger", "Game with this game key doesn't exist.");
+                }
+            }
+            
+            return RedirectToAction("JoinGame", "Home", new { todo = "join", name = name, gamekey = gameKey });
+        }
+
+        /// <summary>
+        /// Action for view /Home/waiting.cshtml
         /// </summary>
         /// <returns>View</returns>
-        public ActionResult Game()
+        public ActionResult Waiting()
         {
-            InsertErrors();
-
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
-            if (gameModel != null)
+            if(gameModel != null)
             {
-                Player winner;
-                if (gameModel.gameBoard.IsGameEnd(out winner))
+                if (gameModel.Game.Active)
                 {
-                    return RedirectToAction("GameOver", "Home");
+                    return RedirectToAction("Game", "Home");
                 }
+
+                InsertMessages();
 
                 return View(gameModel);
             }
@@ -79,10 +166,115 @@ namespace BattleShipNet.Controllers
         }
 
         /// <summary>
-        /// Action for Shoot's
+        /// Action for EmailFriend
         /// </summary>
+        /// <param name="email">Email to send mail to (string)</param>
+        /// <returns>Redirect</returns>
+        //public ActionResult EmailFriend(string email)
+        //{
+        //    // Get GameModel for session GameBoard
+        //    GameModel gameModel = GetSessionGame();
+
+        //    if(gameModel != null)
+        //    {
+        //        if (gameModel.Game.Active)
+        //        {
+        //            AddMessage("danger", "Email got never send, for a player had already join this game!");
+        //            return RedirectToAction("Game", "Home");
+        //        }
+
+        //        string url = Url.Action("JoinGame", "Home", new { gamekey = Session["gamekey"] }, Request.Url.Scheme);
+
+        //        try
+        //        {
+        //            MailModel.SendInviteEmail(email, gameModel.YourPlayer.Name, url);
+
+        //            AddMessage("success", "A email with game url, was send to your friend!");
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            AddMessage("danger", ex.Message);
+        //        }
+
+        //        return RedirectToAction("Waiting", "Home");
+        //    }
+
+        //    return RedirectToAction("Index", "Home");
+        //}
+
+        /// <summary>
+        /// Action for view /Home/game.cshtml
+        /// </summary>
+        /// <returns>View</returns>
+        public ActionResult Game()
+        {
+            // Get GameModel for session GameBoard
+            GameModel gameModel = GetSessionGame();
+
+            if(gameModel != null)
+            {
+                if (!gameModel.Game.Active)
+                {
+                    AddMessage("danger", "Game has not started yet, still waiting on opponent player!");
+                    return RedirectToAction("Waiting", "Home");
+                }
+
+                Player winner;
+                if (gameModel.Game.IsGameEnd(out winner))
+                {
+                    return RedirectToAction("GameEnd", "Home");
+                }
+
+                InsertMessages();
+
+                return View(gameModel);
+            }
+
+            return RedirectToAction("Index", "Home");
+        }
+
+        /// <summary>
+        /// Action for view /Home/updategame.cshtml
+        /// </summary>
+        /// <returns>View</returns>
+        public ActionResult UpdateGame(string lastupdate)
+        {
+            // Get GameModel for session GameBoard
+            GameModel gameModel = GetSessionGame();
+
+            if (gameModel != null)
+            {
+                DateTime lastUpdate;
+
+                DateTime.TryParse(lastupdate, out lastUpdate);
+
+                if ((lastUpdate == null) || gameModel.Game.LastUpdate > lastUpdate)
+                {
+                    Response.ContentType = "application/json";
+                    return View(gameModel);
+                }
+                else
+                {
+                    Response.StatusCode = (int)HttpStatusCode.NotModified;
+                    return null;
+                }
+            }
+
+            Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return null;
+        }
+
+        /// <summary>
+        /// Action for view /Home/shoot.cshtml
+        /// </summary>
+        /// <param name="x">Position x to shoot on (int)</param>
+        /// <param name="y">Position y to shoot on (int)</param>
+        /// <returns>View/Redirect</returns>
         public ActionResult Shoot(string x, string y)
         {
+            // If Request ask for json
+            bool json = Request.Headers.Get("Accept").StartsWith("application/json");
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
             if (gameModel != null)
@@ -91,44 +283,74 @@ namespace BattleShipNet.Controllers
                 {
                     bool result = gameModel.Shoot(x, y);
 
-                    // Test code
-                    Session["PlayerId"] = gameModel.gameBoard.Turn;
-
-                    /*if(result)
-                    {
-                        Player winner;
-                        if (gameModel.gameBoard.IsGameEnd(out winner))
-                        {
-                            
-                        }
-                    }*/
+                    ViewBag.Result = result;
                 }
                 catch (Exception ex)
                 {
-                    errors.Add(ex.Message);
+                    AddMessage("danger", ex.Message);
+
+                    if (json)
+                    {
+                        InsertMessages();
+                    }
                 }
 
-                return RedirectToAction("Game", "Home");
+                if (json)
+                {
+                    Response.ContentType = "application/json";
+                    return View(gameModel);
+                }
+                else {
+                    return RedirectToAction("Game", "Home");
+                }
+            }
+
+            if(json)
+            {
+                Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                return null;
             }
 
             return RedirectToAction("Index", "Home");
         }
 
         /// <summary>
-        /// Action for /Home/gameover.cshtml
+        /// Action for view /Home/gametestinfo.cshtml (Only to test game code)
         /// </summary>
         /// <returns>View</returns>
-        public ActionResult GameOver()
+        //public ActionResult GameTestInfo()
+        //{
+        //    // Get GameModel for session GameBoard
+        //    GameModel gameModel = GetSessionGame();
+
+        //    if (gameModel != null)
+        //    {
+        //        return View(gameModel);
+        //    }
+
+        //    return RedirectToAction("Index", "Home");
+        //}
+
+        /// <summary>
+        /// Action for view /Home/gameend.cshtml
+        /// </summary>
+        /// <returns>View</returns>
+        public ActionResult GameEnd()
         {
+            // Get GameModel for session GameBoard
             GameModel gameModel = GetSessionGame();
 
             if (gameModel != null)
             {
                 Player winner = new Player();
-                if (gameModel.gameBoard.IsGameEnd(out winner))
+                if (gameModel.Game.IsGameEnd(out winner))
                 {
                     ViewBag.Winner = winner;
-                    return View(gameModel);
+                    ViewBag.Player = gameModel.YourPlayer;
+                    gameModel.YourPlayer.HaveSeenEndScreen = true;
+
+                    RemoveSessionGame();
+                    return View();
                 }
                 else
                 {
@@ -140,7 +362,7 @@ namespace BattleShipNet.Controllers
         }
     
         /// <summary>
-        /// Takes care get GameBoard from session GameKey
+        /// Takes care to get GameBoard from session GameKey
         /// </summary>
         /// <returns>GameModel object with GameBoard</returns>
         private GameModel GetSessionGame()
@@ -160,16 +382,48 @@ namespace BattleShipNet.Controllers
                 }
             }
 
+            AddMessage("danger", "Fail to find a active game with your session.");
+
             return null;
         }
 
         /// <summary>
-        /// Method to help insert error message list to Views
+        /// Remove GameBoard with session GameKey
         /// </summary>
-        private void InsertErrors()
+        private void RemoveSessionGame()
         {
-            ViewBag.Errors = errors;
-            errors = new List<string>();
+            if (Session["GameKey"] != null)
+            {
+                string gameKey = Session["GameKey"].ToString();
+
+                games.Remove(gameKey);
+                Session["GameKey"] = null;
+                Session["PlayerID"] = null;
+            }
+        }
+
+        /// <summary>
+        /// Method to add message to messages dictonary under right message type
+        /// </summary>
+        /// <param name="messageType">Message type (string)</param>
+        /// <param name="message">Message (string)</param>
+        private void AddMessage(string messageType, string message)
+        {
+            if (!messages.ContainsKey(messageType))
+            {
+                messages.Add(messageType, new List<string>());
+            }
+
+            messages[messageType].Add(message);
+        }
+
+        /// <summary>
+        /// Method to help insert messages dictionary to Views
+        /// </summary>
+        private void InsertMessages()
+        {
+            ViewBag.Messages = messages;
+            messages = new Dictionary<string, List<string>>();
         }
     }
 }

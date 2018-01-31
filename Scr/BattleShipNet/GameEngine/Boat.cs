@@ -10,13 +10,22 @@ namespace GameEngine
     {
         public Position[] Positions { get; private set; }
         public BoatType Type { get; }
-        public int Size {
-            get {
+        public List<Position> Hits { get; }
+
+        /// <summary>
+        /// Properties for BoatType's size - get
+        /// </summary>
+        public int Size
+        {
+            get
+            {
                 return (int)Type;
             }
         }
-        public List<Position> Hits { get; }
 
+        /// <summary>
+        /// Properties for check if boat it's sink - get
+        /// </summary>
         public bool Sink
         {
             get
@@ -86,21 +95,21 @@ namespace GameEngine
         public bool AreYouHere(Position[] positions)
         {
             // Check if it's horizontal or vertical, and loop-through all possible positions to check if Boat is there
-            if (positions[0].Y > positions[1].Y)
+            if (positions[0].Y < positions[1].Y)
             {
-                for (int i = positions[0].Y; i <= positions[1].Y; i++)
+                for (int y = positions[0].Y; y <= positions[1].Y; y++)
                 {
-                    if (AreYouHere(new Position(positions[0].X, i)))
+                    if (AreYouHere(new Position(positions[0].X, y)))
                     {
                         return true;
-                    }  
+                    }
                 }
             }
             else
             {
-                for (int i = positions[0].X; i <= positions[1].X; i++)
+                for (int x = positions[0].X; x <= positions[1].X; x++)
                 {
-                    if (AreYouHere(new Position(i, positions[0].Y)))
+                    if (AreYouHere(new Position(x, positions[0].Y)))
                     {
                         return true;
                     }

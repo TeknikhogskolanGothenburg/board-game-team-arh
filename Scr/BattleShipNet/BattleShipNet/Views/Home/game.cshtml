@@ -6,9 +6,10 @@
 {
     bool yours = (playerId == Model.YourPlayerId);
     string id = (yours) ? "your" : "enemy";
-    Player player = Model.gameBoard.Players[playerId];
+    string turn = (playerId == Model.Game.Turn) ? "true" : "false";
+    Player player = Model.Game.Players[playerId];
 
-    <div id="@(id)board" class="playerboard">
+    <div id="@(id)board" class="playerboard" data-turn="@turn" data-playerid="@playerId">
         <h2 class="playerName">@player.Name</h2>
 
         <div class="topHeader">
@@ -33,12 +34,12 @@
                     if (!yours)
                     {
                         <a href="/Home/Shoot?x=@(x)&amp;y=@(y)">
-                            <div id="s@(x)_@(y)" class="square @classes"></div>
+                            <div data-x="@x" data-y="@y" class="square @classes"></div>
                         </a>
                     }
                     else
                     {
-                        <div id="s@(x)_@(y)" class="square @classes"></div>
+                        <div data-x="@x" data-y="@y" class="square @classes"></div>
                     }
                 }
             }
@@ -52,17 +53,23 @@
 @section Styles {
     <link href="~/Content/battleship.css" rel="stylesheet" type="text/css" />
 }
-@section JavaScript {
-    <!--script type="text/javascript" src="battleship.js"></script-->
+@section Scripts {
+    <script type="text/javascript" src="~/Scripts/battleship.js"></script>
 }
 
-<div id="instructionsArea">
-	<p id="instructions">Just a example text, until we know what to write here! Try to sink every battleship!</p>
-</div>
+@MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
 
-@MessageHandler.Alert("danger", (List<string>)ViewBag.Errors)
-
-<div id="playerboards">
+<div id="playerboards" data-lastupdate="@DateTime.Now">
     @makeBoard(Model.YourPlayerId)
     @makeBoard(Model.EnemyPlayerId)
+</div>
+
+<div id="instructionsArea">
+    <p id="instructions">
+        Introduction: one play needs to shoot another player’s ship before his/her own ship sinks.
+        One play starts to shoot where the other player places his/her ship, if he/she shoots the right position,
+        he/she can continue to shoot, the right position will be marked as <b>red</b>;
+        if he/she shoots the wrong position, the wrong position will be marked as <b>black</b>,
+        and the other player starts to shoot. The winner is the one who can firstly sink all 7 ships of the other player.
+    </p>
 </div>

@@ -9,22 +9,18 @@ namespace GameEngine
     public class Player
     {
         public string Name { get; set; }
-        public Boat[] Boats { get; }
+        public List<Boat> Boats { get; }
         public List<Position> AlreadyHitPositions { get; private set; }
+        public bool HaveSeenEndScreen{ get; set; }
 
+        /// <summary>
+        /// Properties for return if player has lost game - get
+        /// </summary>
         public bool HasPlayerLost
         {
             get
             {
-                foreach (var boat in Boats)
-                {
-                    if (!boat.Sink)
-                    {
-                        return false;
-                    }
-                }
-
-                return true;
+                return (Boats.Find(boat => boat.Sink == false) == null);
             }
         }
 
@@ -34,15 +30,14 @@ namespace GameEngine
         public Player()
         {
             AlreadyHitPositions = new List<Position>();
+            Name = null;
+            HaveSeenEndScreen = false;
 
-            Boats = new Boat[7] {
+            Boats = new List<Boat> {
                 new Boat(BoatType.Battleship),
                 new Boat(BoatType.Cruiser),
-                //new Boat(BoatType.Cruiser),
                 new Boat(BoatType.Destroyer),
                 new Boat(BoatType.Destroyer),
-                //new Boat(BoatType.Destroyer),
-                //new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine),
                 new Boat(BoatType.Submarine)
@@ -86,15 +81,15 @@ namespace GameEngine
                     }
 
                     //We cannot place Boats beyond the boundaries of the board
-                    if (endY > 10 || endX > 10)
+                    try
+                    {
+                        positions[0] = new Position(startX, startY);
+                        positions[1] = new Position(endX, endY);
+                    }
+                    catch
                     {
                         continue;
                     }
-
-                    positions = new Position[2] {
-                        new Position(startX, startY),
-                        new Position(endX, endY)
-                    };
 
                     bool test = IsAnyBoatHere(positions);
 
@@ -179,7 +174,7 @@ namespace GameEngine
         /// </summary>
         /// <param name="positions">Positions to check (Position[])</param>
         /// <returns>Validate result (bool)</returns>
-        private bool IsAnyBoatHere(Position[] positions)
+        public bool IsAnyBoatHere(Position[] positions)
         {
             //Check if specified squad are occupied
             foreach (Boat boat in Boats)

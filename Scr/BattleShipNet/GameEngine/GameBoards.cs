@@ -12,23 +12,13 @@ namespace GameEngine
         public List<GameBoard> Games { get; }
 
         /// <summary>
-        /// Return List of GameBoards which is open to join
+        /// Properties to return List of GameBoards which is open to join
         /// </summary>
         public List<GameBoard> OpenGames
         {
             get
             {
-                List<GameBoard> openGameKeys = new List<GameBoard>();
-
-                foreach (GameBoard gameBoard in Games)
-                {
-                    if (!gameBoard.PrivateGame && gameBoard.Players[1].Name == null)
-                    {
-                        openGameKeys.Add(gameBoard);
-                    }
-                }
-
-                return openGameKeys;
+                return Games.FindAll(game => !game.Private && !game.Active);
             }
         }
 
@@ -73,6 +63,24 @@ namespace GameEngine
         public GameBoard Get(string gameKey)
         {
             return Games.Find(board => board.GameKey == gameKey);
+        }
+
+        /// <summary>
+        /// Remove GameBoard with GameKey from Games
+        /// </summary>
+        /// <param name="GameKey">Game key (string)</param>
+        public void Remove(string gameKey)
+        {
+            for (int i = 0; i < Games.Count; i++)
+            {
+                GameBoard game = Games.ElementAt(i);
+                if (game.GameKey == gameKey && game.BothPlayerHasSeenEndScreen)
+                {
+                    Games[i] = null;
+                    Games.RemoveAt(i);
+                    return;
+                }
+            }
         }
 
         /// <summary>

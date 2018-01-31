@@ -8,3 +8,7 @@
 * "As a player, I want the game to update me about whats happens on in the game."
 * "As a player, I want to be inform when I won the game."
 * "As a player, I want to be inform when I lost the game."
+* "As a player, I want to randomly to place my boats."
+* "As a player, I want to know when its my turn to play."
+* "As a player, I can leave the game when I want to."
+* "As a player, I want to invite friend to join name by sending game key."
