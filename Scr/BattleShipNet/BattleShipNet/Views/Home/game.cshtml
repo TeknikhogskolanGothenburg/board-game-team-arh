@@ -58,7 +58,11 @@
 }
 
 <div id="instructionsArea">
-	<p id="instructions">Just a example text, until we know what to write here! Try to sink every battleship!</p>
+    <p id="instructions">Introduction: one play needs to shoot another player’s ship before his/her own ship sinks. 
+    One play starts to shoot where the other player places his/her ship, if he/she shoots the right position, 
+    he/she can continue to shoot, the right position will be marked as <b>red</b>; 
+    if he/she shoots the wrong position, the wrong position will be marked as <b>black</b>,
+    and the other player starts to shoot. The winner is the one who can firstly sink all 7 ships of the other player.</p>
 </div>
 
 @MessageHandler.Alerts((Dictionary<string, List<string>>)ViewBag.Messages)
