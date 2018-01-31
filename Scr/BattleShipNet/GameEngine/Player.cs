@@ -79,15 +79,15 @@ namespace GameEngine
                     }
 
                     //We cannot place Boats beyond the boundaries of the board
-                    if (endY > 10 || endX > 10)
+                    try
+                    {
+                        positions[0] = new Position(startX, startY);
+                        positions[1] = new Position(endX, endY);
+                    }
+                    catch
                     {
                         continue;
                     }
-
-                    positions = new Position[2] {
-                        new Position(startX, startY),
-                        new Position(endX, endY)
-                    };
 
                     bool test = IsAnyBoatHere(positions);
 
