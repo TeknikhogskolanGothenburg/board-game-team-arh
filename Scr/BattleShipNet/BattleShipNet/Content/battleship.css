@@ -1,7 +1,7 @@
 ﻿#instructionsArea {
     position: relative;
-    margin: 0 auto 2em auto;
-    width: 600px;
+    margin: 2em auto;
+    width: 800px;
 }
 
 #playerboards:after {
