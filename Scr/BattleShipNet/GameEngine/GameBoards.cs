@@ -73,10 +73,12 @@ namespace GameEngine
         {
             for (int i = 0; i < Games.Count; i++)
             {
-                if(Games.ElementAt(i).GameKey == gameKey)
+                GameBoard game = Games.ElementAt(i);
+                if (game.GameKey == gameKey && game.BothPlayerHasSeenEndScreen)
                 {
                     Games[i] = null;
                     Games.RemoveAt(i);
+                    return;
                 }
             }
         }

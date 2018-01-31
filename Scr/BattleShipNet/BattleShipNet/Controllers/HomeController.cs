@@ -331,6 +331,8 @@ namespace BattleShipNet.Controllers
                 {
                     ViewBag.Winner = winner;
                     ViewBag.Player = gameModel.YourPlayer;
+                    gameModel.YourPlayer.HaveSeenEndScreen = true;
+
                     RemoveSessionGame();
                     return View();
                 }

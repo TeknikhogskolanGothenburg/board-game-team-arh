@@ -15,6 +15,15 @@ namespace GameEngine
         public bool PrivateGame { get; set; }
         public int Turn { get; private set; }
 
+        // Properties for check if both player has seen end screen
+        public bool BothPlayerHasSeenEndScreen
+        {
+            get
+            {
+                return (Players[0].HaveSeenEndScreen && Players[1].HaveSeenEndScreen);
+            }
+        }
+
         /// <summary>
         /// Properties for lastUpdate - get & set
         /// </summary>

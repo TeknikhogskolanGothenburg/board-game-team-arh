@@ -11,6 +11,7 @@ namespace GameEngine
         public string Name { get; set; }
         public List<Boat> Boats { get; }
         public List<Position> AlreadyHitPositions { get; private set; }
+        public bool HaveSeenEndScreen{ get; set; }
 
         /// <summary>
         /// Properties for return if player has lost game - get
@@ -30,6 +31,7 @@ namespace GameEngine
         {
             AlreadyHitPositions = new List<Position>();
             Name = null;
+            HaveSeenEndScreen = false;
 
             Boats = new List<Boat> {
                 new Boat(BoatType.Battleship),
